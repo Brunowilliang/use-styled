@@ -1,0 +1,58 @@
+{
+  "name": "use-styled",
+  "version": "0.1.8",
+  "description": "A lightweight styled components library optimized for Tailwind CSS.",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "yarn build"
+  },
+  "peerDependencies": {
+    "clsx": ">=2.0.0",
+    "react": ">=18.0.0",
+    "react-native": ">=0.74.0",
+    "tailwind-merge": ">=3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@types/react": ">=18.0.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.2.0",
+    "tsup": "^8.4.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "react",
+    "react-native",
+    "styled",
+    "tailwind",
+    "css-in-js",
+    "utility",
+    "hook"
+  ],
+  "author": "Bruno Garcia <eu@brunowillian.com>",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Brunowilliang/use-styled.git"
+  },
+  "homepage": "https://github.com/Brunowilliang/use-styled",
+  "bugs": {
+    "url": "https://github.com/Brunowilliang/use-styled/discussions"
+  }
+}
