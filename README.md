@@ -19,7 +19,7 @@ A lightweight and flexible utility function for creating styled components in Re
 
 ## Installation
 
-Using [Yarn](https://yarnpkg.com/) (as requested):
+Using [Yarn](https://yarnpkg.com/):
 
 ```bash
 yarn add use-styled clsx tailwind-merge
