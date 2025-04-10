@@ -5,19 +5,13 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    }
-  },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
-    "prepublishOnly": "yarn build"
+    "build": "rollup -c",
+    "prepublishOnly": "yarn build",
+    "check:size": "bundlewatch"
   },
   "peerDependencies": {
     "clsx": ">=2.0.0",
@@ -26,12 +20,18 @@
     "tailwind-merge": ">=3.0.0"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-typescript": "^12.1.2",
     "@types/node": "^22.14.0",
     "@types/react": ">=18.0.0",
+    "bundlewatch": "^0.4.1",
     "clsx": "^2.1.1",
+    "rollup": "^4.39.0",
+    "rollup-plugin-delete": "^3.0.1",
     "tailwind-merge": "^3.2.0",
-    "tsup": "^8.4.0",
-    "typescript": "^5.0.0"
+    "tslib": "^2.8.1",
+    "typescript": "^5.8.3"
   },
   "keywords": [
     "react",
@@ -54,5 +54,17 @@
   "homepage": "https://github.com/Brunowilliang/use-styled",
   "bugs": {
     "url": "https://github.com/Brunowilliang/use-styled/discussions"
+  },
+  "bundlewatch": {
+    "files": [
+      {
+        "path": "./dist/index.js",
+        "maxSize": "5kB"
+      },
+      {
+        "path": "./dist/index.mjs",
+        "maxSize": "5kB"
+      }
+    ]
   }
 }
