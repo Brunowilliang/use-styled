@@ -1,6 +1,6 @@
 {
   "name": "use-styled",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "A lightweight styled components library optimized for Tailwind CSS.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
