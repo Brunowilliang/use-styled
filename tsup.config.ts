@@ -12,7 +12,7 @@ export default defineConfig({
   },
   treeshake: true,
   minify: true,
-  outDir: '../dist',
+  outDir: 'dist',
   sourcemap: true,
   ignoreWatch: ['**/{.git,node_modules}/**'],
   metafile: true,
