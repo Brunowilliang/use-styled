@@ -1,36 +1,33 @@
 {
   "name": "use-styled",
-  "version": "0.1.9",
+  "version": "0.1.11",
   "description": "A lightweight styled components library optimized for Tailwind CSS.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "scripts": {
-    "build": "rollup -c",
+    "build": "tsup",
+    "dev": "tsup --watch",
     "prepublishOnly": "yarn build",
-    "check:size": "bundlewatch"
+    "check:size": "bundlewatch --config bundlewatch.config.js"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.2.0"
   },
   "peerDependencies": {
-    "clsx": ">=2.0.0",
-    "react": ">=18.0.0",
-    "react-native": ">=0.74.0",
-    "tailwind-merge": ">=3.0.0"
+    "react": ">=18.0.0"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.3",
-    "@rollup/plugin-node-resolve": "^16.0.1",
-    "@rollup/plugin-typescript": "^12.1.2",
     "@types/node": "^22.14.0",
     "@types/react": ">=18.0.0",
     "bundlewatch": "^0.4.1",
-    "clsx": "^2.1.1",
-    "rollup": "^4.39.0",
-    "rollup-plugin-delete": "^3.0.1",
-    "tailwind-merge": "^3.2.0",
     "tslib": "^2.8.1",
+    "tsup": "^8.4.0",
     "typescript": "^5.8.3"
   },
   "keywords": [
@@ -54,17 +51,5 @@
   "homepage": "https://github.com/Brunowilliang/use-styled",
   "bugs": {
     "url": "https://github.com/Brunowilliang/use-styled/discussions"
-  },
-  "bundlewatch": {
-    "files": [
-      {
-        "path": "./dist/index.js",
-        "maxSize": "5kB"
-      },
-      {
-        "path": "./dist/index.mjs",
-        "maxSize": "5kB"
-      }
-    ]
   }
 }
