@@ -16,7 +16,7 @@
     "noEmit": true
   },
   "include": [
-    "index.tsx"
+    "old/bom1.tsx"
   ],
   "exclude": [
     "node_modules",

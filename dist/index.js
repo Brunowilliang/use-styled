@@ -1,8 +1,8 @@
 'use strict';
 
 var jsxRuntime = require('react/jsx-runtime');
-var clsx = require('clsx');
-var tailwindMerge = require('tailwind-merge');
+require('clsx');
+require('tailwind-merge');
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -38,51 +38,36 @@ typeof SuppressedError === "function" ? SuppressedError : function (error, suppr
     return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
 };
 
-// --- Utility Functions ---
 /**
- * Utility function to merge CSS classes with Tailwind CSS support.
- * Uses clsx for conditional classes and tailwind-merge to resolve conflicts.
- * @param inputs - Class values to combine.
- * @returns The merged class string.
+ * Merges multiple props objects, combining styles intelligently.
+ * This is an internal utility that powers the styling mechanism.
+ *
+ * @template T - The type of props objects being merged
+ * @param sources - Multiple props objects to merge
+ * @returns A single merged props object
  */
-function cn(...inputs) {
-    return tailwindMerge.twMerge(clsx(inputs));
-}
-/**
- * Merges multiple props objects, combining classNames and styles intelligently.
- * Later props override earlier props.
- * @param propsList - An array of prop objects to merge.
- * @returns The merged props object.
- */
-function mergeProps(...propsList) {
+function mergeProps(...sources) {
     const result = {};
-    for (const props of propsList) {
-        if (!props)
+    for (const source of sources) {
+        if (!source)
             continue;
-        for (const key in props) {
+        for (const key in source) {
             // Ensure the key is a valid key of T before proceeding
-            if (!Object.prototype.hasOwnProperty.call(props, key))
+            if (!Object.prototype.hasOwnProperty.call(source, key))
                 continue;
-            const value = props[key]; // Cast here since we know key is in props
-            // Handle className merging
-            if (key === "className" &&
-                typeof value === "string" &&
-                value // Ensure value is not empty string if needed
-            ) {
-                result.className = cn(result.className, value);
-                // Handle style merging
-            }
-            else if (key === "style" &&
+            const value = source[key]; // Cast here since we know key is in source
+            // Handle style merging
+            if (key === "style" &&
                 typeof value === "object" &&
                 value !== null &&
                 typeof result.style === "object" &&
                 result.style !== null) {
-                // Simple style merge, last write wins for conflicting keys
+                // For style objects, shallow merge them
                 result.style = Object.assign(Object.assign({}, result.style), value);
             }
             else if (value !== undefined) {
-                // Use direct assignment after ensuring key is valid
-                // Cast value explicitly to T[keyof T] to resolve complex type inference issue
+                // For all other props, newest value wins (last source)
+                // Cast value explicitly to T[keyof T] to resolve type inference issues
                 result[key] = value;
             }
         }
@@ -139,7 +124,7 @@ function useStyled(component, config) {
             currentPropsKeys: Object.keys(currentProps),
         });
         for (const compound of compoundVariants) {
-            const { className, style } = compound, conditions = __rest(compound, ["className", "style"]);
+            const { style } = compound, conditions = __rest(compound, ["style"]);
             let isMatch = true;
             logEvent("compound_variants_check_condition", {
                 conditionsKeys: Object.keys(conditions),
@@ -370,11 +355,10 @@ function useStyled(component, config) {
         baseVariantStyles, // 3. Base Variants
         // Cast directProps to Partial as required by mergeProps
         directProps);
-        // Separate className and style for potential framework specifics (e.g., React Native)
-        const { className, style } = mergedProps, finalRestProps = __rest(mergedProps, ["className", "style"]);
+        // Separate style for potential framework specifics (e.g., React Native)
+        const { style } = mergedProps, finalRestProps = __rest(mergedProps, ["style"]);
         logEvent("prop_merging_complete", {
             // Log final pieces separately to avoid complex object stringification issues
-            finalClassName: className,
             finalStyleKeys: Object.keys(style || {}),
             finalRestPropKeys: Object.keys(finalRestProps),
         });
@@ -382,7 +366,6 @@ function useStyled(component, config) {
         logEvent("render_component", {
             // Avoid logging Tag component and full props object to prevent cycles
             componentDisplayName: typeof Tag === "string" ? Tag : name, // Use name for non-string tags
-            renderedClassName: className,
             renderedStyleKeys: Object.keys(style || {}),
             renderedRestPropKeys: Object.keys(finalRestProps),
         });
@@ -390,7 +373,7 @@ function useStyled(component, config) {
         // Using 'as any' here as a pragmatic solution for complex generic type issues
         // in JSX spread attributes. Although not ideal for type safety, it resolves the
         // persistent compilation error related to LibraryManagedAttributes.
-        jsxRuntime.jsx(Tag, Object.assign({ className: className, style: style }, finalRestProps, { children: children })));
+        jsxRuntime.jsx(Tag, Object.assign({ style: style }, finalRestProps, { children: children })));
     }
     // Set display name for better debugging
     const componentDisplayName = typeof Tag === "string"
