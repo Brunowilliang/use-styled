@@ -1,81 +1,81 @@
 # use-styled 🎨
 
-Uma biblioteca React/React Native poderosa e flexível, inspirada em Stitches, CVA e Tamagui, para criar componentes estilizados com variantes de forma declarativa e com forte segurança de tipos usando TypeScript.
+A powerful library for creating React/React Native components
 
-`use-styled` permite que você desacople a lógica de estilo e variantes da lógica do seu componente, tornando seu código mais limpo, reutilizável e fácil de manter.
+`use-styled` allows you to decouple styling and variant logic from your component logic, making your code cleaner, more reusable, and easier to maintain.
 
-## Funcionalidades
+## Features
 
-*   **API Simples:** Um único hook `useStyled` para criar seus componentes estilizados.
-*   **Configuração Declarativa:** Defina estilos base, variantes, variantes padrão e variantes compostas em um objeto de configuração claro.
-*   **Type-Safe:** Totalmente escrito em TypeScript, com validação de configuração em tempo de compilação para evitar erros.
-*   **Agnóstico de Plataforma (Estilos):** Funciona com React para Web (via `style` ou `className`) e React Native (via `style`).
-*   **Suporte a Tailwind/CSS:** Use a prop `className` nas configurações para aplicar classes CSS, ideal para integração com Tailwind CSS, CSS Modules, etc.
-*   **Variantes Múltiplas:** Aplique múltiplas variantes simultaneamente (tamanho, cor, estado, etc.).
-*   **Variantes Compostas:** Aplique estilos específicos para combinações de variantes.
-*   **Variantes Padrão:** Defina valores padrão para suas variantes.
-*   **Mesclagem Inteligente:** Mescla automaticamente `style` (objetos de estilo) e `className` (para web, usando `clsx` e `tailwind-merge` implicitamente) de diferentes fontes (base, variantes, compostas, props diretas).
-*   **Repasse Automático de Props:** Props passadas ao componente estilizado que não são nomes de variantes são automaticamente repassadas ao componente base.
+*   **Simple API:** A single `useStyled` hook to create your styled components.
+*   **Declarative Configuration:** Define base styles, variants, default variants, and compound variants in a clear configuration object.
+*   **Type-Safe:** Fully written in TypeScript, with compile-time configuration validation to prevent errors.
+*   **Platform Agnostic (Styles):** Works with React for Web (via `style` or `className`) and React Native (via `style`).
+*   **Tailwind/CSS Support:** Use the `className` prop in configurations to apply CSS classes, ideal for integration with Tailwind CSS, CSS Modules, etc.
+*   **Multiple Variants:** Apply multiple variants simultaneously (size, color, state, etc.).
+*   **Compound Variants:** Apply specific styles for combinations of variants.
+*   **Default Variants:** Define default values for your variants.
+*   **Smart Merging:** Automatically merges `style` (style objects) and `className` (for web, implicitly using `clsx` and `tailwind-merge`) from different sources (base, variants, compounds, direct props).
+*   **Automatic Prop Forwarding:** Props passed to the styled component that are not variant names are automatically forwarded to the base component.
 
-## Uso Básico
+## Basic Usage
 
-A API principal é o hook `useStyled`.
+The main API is the `useStyled` hook.
 
 ```tsx
-import { useStyled } from 'use-styled'; // Ajuste o caminho da importação
-import { View } from 'react-native'; // ou 'div', 'button', etc.
+import { useStyled } from 'use-styled'; // Adjust the import path
+import { View } from 'react-native'; // or 'div', 'button', etc.
 
-const ComponenteEstilizado = useStyled(ComponenteBase, {
+const StyledComponent = useStyled(BaseComponent, {
   base: {
-    // ... props base
+    // ... base props
   },
   variants: {
-    // ... definições de variantes
+    // ... variant definitions
   },
   defaultVariants: {
-    // ... valores padrão para variantes
+    // ... default values for variants
   },
   compoundVariants: [
-    // ... regras para combinações de variantes
+    // ... rules for variant combinations
   ]
 });
 
-// Uso:
-<ComponenteEstilizado propVariante1="valor" propVariante2={true} propDoComponenteBase="abc" />
+// Usage:
+<StyledComponent variantProp1="value" variantProp2={true} baseComponentProp="abc" />
 ```
 
-*   **`ComponenteBase`**: O componente React que você deseja estilizar (ex: `View`, `Text`, `'div'`, `'button'`, ou um componente customizado).
-*   **`configuracao`**: Um objeto que define como o componente será estilizado.
+*   **`BaseComponent`**: The React component you want to style (e.g., `View`, `Text`, `'div'`, `'button'`, or a custom component).
+*   **`configuration`**: An object that defines how the component will be styled.
 
-## Objeto de Configuração Detalhado
+## Detailed Configuration Object
 
-O objeto de configuração é o coração do `useStyled`.
+The configuration object is the heart of `useStyled`.
 
-### `base` (Opcional)
+### `base` (Optional)
 
-Um objeto contendo props que serão aplicadas incondicionalmente ao `ComponenteBase`.
+An object containing props that will be unconditionally applied to the `BaseComponent`.
 
-*   Use `style` para aplicar objetos de estilo inline ou React Native.
-*   Use `className` para aplicar classes CSS (ex: Tailwind) na web.
-*   Outras props válidas para o `ComponenteBase` (incluindo `data-*`) também são permitidas.
+*   Use `style` to apply inline or React Native style objects.
+*   Use `className` to apply CSS classes (e.g., Tailwind) on the web.
+*   Other valid props for the `BaseComponent` (including `data-*`) are also allowed.
 
 ```js
 {
   base: {
-    style: { boxSizing: 'border-box', margin: 0 }, // Estilo base
-    className: 'font-sans antialiased', // Classes base (ex: Tailwind)
+    style: { boxSizing: 'border-box', margin: 0 }, // Base style
+    className: 'font-sans antialiased', // Base classes (e.g., Tailwind)
     'data-component': 'base-element'
   }
 }
 ```
 
-### `variants` (Opcional)
+### `variants` (Optional)
 
-Define os diferentes estados visuais ou comportamentais.
+Defines different visual or behavioral states.
 
-*   Chave externa: nome da variante (prop).
-*   Chave interna: valor da variante (`string` ou `boolean`).
-*   Valor final: objeto de props a serem aplicadas (`style`, `className`, ou outras props válidas).
+*   Outer key: variant name (prop).
+*   Inner key: variant value (`string` or `boolean`).
+*   Final value: object of props to be applied (`style`, `className`, or other valid props).
 
 ```js
 {
@@ -83,7 +83,7 @@ Define os diferentes estados visuais ou comportamentais.
     intent: {
       primary: {
         style: { /* RN Style */ },
-        className: 'bg-blue-500 text-white hover:bg-blue-600' // Estilo Web/Tailwind
+        className: 'bg-blue-500 text-white hover:bg-blue-600' // Web/Tailwind style
       },
       secondary: {
         style: { /* RN Style */ },
@@ -91,7 +91,7 @@ Define os diferentes estados visuais ou comportamentais.
       }
     },
     size: {
-      small: { style: { padding: '8px 12px', fontSize: 14 } }, // Estilo objeto
+      small: { style: { padding: '8px 12px', fontSize: 14 } }, // Style object
       medium: { style: { padding: '12px 16px', fontSize: 16 } }
     },
     disabled: {
@@ -104,95 +104,97 @@ Define os diferentes estados visuais ou comportamentais.
 }
 ```
 
-### `defaultVariants` (Opcional)
+### `defaultVariants` (Optional)
 
-Especifica quais valores de variante usar quando nenhuma prop correspondente for passada ao componente estilizado.
+Specifies which variant values to use when no corresponding prop is passed to the styled component.
 
 ```js
 {
-  variants: { /* ... como acima ... */ },
+  variants: { /* ... as above ... */ },
   defaultVariants: {
-    intent: 'primary', // Se <Button /> for usado, intent será 'primary'
-    size: 'medium',   // Se <Button /> for usado, size será 'medium'
-    disabled: false   // Se <Button disabled /> ou <Button disabled={undefined} /> for usado, será false
+    intent: 'primary', // If <Button /> is used, intent will be 'primary'
+    size: 'medium',   // If <Button /> is used, size will be 'medium'
+    disabled: false   // If <Button disabled /> or <Button disabled={undefined} /> is used, it will be false
   }
 }
 ```
 
-### `compoundVariants` (Opcional)
+### `compoundVariants` (Optional)
 
-Permite aplicar props adicionais quando uma **combinação específica** de variantes está ativa. É um array de objetos, onde cada objeto define as condições e as props a serem aplicadas.
+Allows applying additional props when a **specific combination** of variants is active. It's an array of objects, where each object defines the conditions and the props to be applied.
 
-As `props` definidas aqui são mescladas sobre as props de `base` e das `variants` ativas (seguindo a ordem de precedência: base -> variants -> compound -> props diretas).
+The `props` defined here are merged over the props from `base` and active `variants` (following the precedence order: base -> variants -> compound -> direct props).
 
 ```js
 {
-  variants: { /* ... como acima ... */ },
+  variants: { /* ... as above ... */ },
   compoundVariants: [
-    // Quando intent='primary' E disabled=true
+    // When intent='primary' AND disabled=true
     {
       intent: 'primary',
       disabled: true,
       props: {
-        style: { backgroundColor: 'darkblue' } // Sobrescreve o backgroundColor da variante 'primary'
+        style: { backgroundColor: 'darkblue' } // Overrides the backgroundColor from the 'primary' variant
       }
     },
-    // Quando intent='secondary' E size='small'
+    // When intent='secondary' AND size='small'
     {
       intent: 'secondary',
       size: 'small',
       props: {
-        style: { borderWidth: 2, borderColor: 'black' } // Adiciona borda
+        style: { borderWidth: 2, borderColor: 'black' } // Adds border
       }
     }
   ]
 }
 ```
 
-## Repasse de Props (Props Diretas)
+## Prop Forwarding (Direct Props)
 
-Qualquer prop que você passar para o componente estilizado e que **não** seja um nome de variante definido na configuração será automaticamente repassada para o `ComponenteBase` subjacente.
+Any prop you pass to the styled component that **is not** a variant name defined in the configuration will be automatically forwarded to the underlying `BaseComponent`.
 
-Isso permite que você use todas as props nativas do componente base, como manipuladores de evento (`onClick`, `onPress`), atributos `aria-*`, `id`, etc., diretamente no seu componente estilizado.
+This allows you to use all the native props of the base component, such as event handlers (`onClick`, `onPress`), `aria-*` attributes, `id`, etc., directly on your styled component.
 
 ```tsx
-const MeuBotaoEstilizado = useStyled('button', {
+const MyStyledButton = useStyled('button', {
   variants: {
     intent: { /* ... */ }
   }
 });
 
-// Uso:
-<MeuBotaoEstilizado 
-  intent="primary"  // <-- Prop de variante
-  onClick={() => alert('Clicou!')} // <-- Repassada para o <button>
-  id="meu-id"         // <-- Repassada para o <button>
-  aria-label="Confirmar" // <-- Repassada para o <button>
+// Usage:
+<MyStyledButton 
+  intent="primary"  // <-- Variant prop
+  onClick={() => alert('Clicked!')} // <-- Forwarded to <button>
+  id="my-id"         // <-- Forwarded to <button>
+  aria-label="Confirm" // <-- Forwarded to <button>
 >
-  Clique Aqui
-</MeuBotaoEstilizado>
+  Click Here
+</MyStyledButton>
 ```
 
-As props `style` e `className` passadas diretamente também são tratadas de forma especial: elas são inteligentemente mescladas com os estilos e classes definidos na configuração, com as props diretas tendo a maior prioridade em caso de conflitos.
+The `style` and `className` props passed directly are also treated specially: they are intelligently merged with the styles and classes defined in the configuration, with direct props having the highest priority in case of conflicts.
 
-## Exemplos Práticos
+## Practical Examples
 
-### Exemplo 1: Componente `Button` Flexível
+### Example 1: Flexible `Button` Component
 
-Vamos criar um botão que pode ter diferentes intenções, tamanhos e estados de carregamento.
+Let's create a button that can have different intents, sizes, and loading states.
 
 ```tsx
 import React from 'react';
 import { useStyled } from 'use-styled';
-import { ActivityIndicator, Pressable, Text } from 'react-native'; // Exemplo RN
+import { ActivityIndicator, Pressable, Text } from 'react-native'; // RN Example
 
-// Ou para web:
+// Or for web:
 // const SimpleButton = (props) => <button data-testid="simple-button" {...props} />;
 
-const ButtonBase = React.forwardRef((props, ref) => (
-  // Use Pressable no RN para melhor feedback tátil
-  <Pressable ref={ref} {...props} />
-));
+// Use a base component that supports ref forwarding if needed.
+// React Native's Pressable supports ref directly.
+const ButtonBase = Pressable;
+
+// OR if using a custom component without forwardRef:
+// const ButtonBase = (props) => <Pressable {...props} />;
 
 const Button = useStyled(ButtonBase, {
   base: {
@@ -201,22 +203,22 @@ const Button = useStyled(ButtonBase, {
       borderRadius: 8,
       alignItems: 'center',
       justifyContent: 'center',
-      flexDirection: 'row', // Para alinhar texto e indicador
+      flexDirection: 'row', // To align text and indicator
     },
-    // Props padrão do Pressable/Button podem ir aqui
+    // Default Pressable/Button props can go here
     accessibilityRole: 'button',
   },
   variants: {
     intent: {
       primary: {
-        style: { backgroundColor: '#007AFF' }, // Azul
-        // Vamos definir a cor do texto separadamente para clareza
+        style: { backgroundColor: '#007AFF' }, // Blue
+        // Let's define text color separately for clarity
       },
       secondary: {
-        style: { backgroundColor: '#E5E5EA' }, // Cinza claro
+        style: { backgroundColor: '#E5E5EA' }, // Light gray
       },
       danger: {
-        style: { backgroundColor: '#FF3B30' }, // Vermelho
+        style: { backgroundColor: '#FF3B30' }, // Red
       },
     },
     size: {
@@ -235,10 +237,10 @@ const Button = useStyled(ButtonBase, {
     loading: {
       true: {
         style: { opacity: 0.7 },
-        // Poderíamos desabilitar interações aqui também
+        // We could disable interactions here too
       },
     },
-    // Variante separada para cor do texto/ícone
+    // Separate variant for text/icon color
     contentColor: {
        white: { style: { color: '#FFFFFF' } },
        black: { style: { color: '#1C1C1E' } },
@@ -251,10 +253,10 @@ const Button = useStyled(ButtonBase, {
     size: 'medium',
     outline: false,
     loading: false,
-    contentColor: 'white', // Default para primário
+    contentColor: 'white', // Default for primary
   },
   compoundVariants: [
-    // Ajusta cor do conteúdo e borda para secundário
+    // Adjust content color and border for secondary
     {
       intent: 'secondary',
       props: { contentColor: 'blue' }
@@ -262,22 +264,22 @@ const Button = useStyled(ButtonBase, {
     {
       intent: 'secondary',
       outline: true,
-      props: { style: { borderColor: '#007AFF' }} // Borda azul para outline secondary
+      props: { style: { borderColor: '#007AFF' }} // Blue border for outline secondary
     },
-    // Ajusta cor do conteúdo e borda para danger
+    // Adjust content color and border for danger
     {
       intent: 'danger',
-      props: { contentColor: 'white' } // Texto branco no botão vermelho
+      props: { contentColor: 'white' } // White text on red button
     },
     {
         intent: 'danger',
         outline: true,
         props: {
-            style: { backgroundColor: 'transparent', borderColor: '#FF3B30' }, // Fundo transparente
-            contentColor: 'red' // Texto vermelho
+            style: { backgroundColor: 'transparent', borderColor: '#FF3B30' }, // Transparent background
+            contentColor: 'red' // Red text
         }
     },
-    // Ajusta cor do conteúdo para primário outline
+    // Adjust content color for primary outline
      {
       intent: 'primary',
       outline: true,
@@ -289,7 +291,7 @@ const Button = useStyled(ButtonBase, {
   ],
 });
 
-// Componente de Texto interno para aplicar a cor
+// Internal Text component to apply color
 const ButtonText = useStyled(Text, {
     variants: {
         contentColor: {
@@ -305,19 +307,19 @@ const ButtonText = useStyled(Text, {
     },
      defaultVariants: {
         size: 'medium',
-        // contentColor será passado do Button
+        // contentColor will be passed from Button
     }
 });
 
 
-// Uso do Botão
+// Button Usage
 const App = () => (
   <View style={{ padding: 20, gap: 10 }}>
     <Button>
-      <ButtonText>Primário Médio</ButtonText>
+      <ButtonText>Primary Medium</ButtonText>
     </Button>
     <Button intent="secondary" size="small">
-       <ButtonText contentColor="blue" size="small">Secundário Pequeno</ButtonText>
+       <ButtonText contentColor="blue" size="small">Secondary Small</ButtonText>
     </Button>
      <Button intent="danger" outline={true}>
        <ButtonText contentColor="red">Danger Outline</ButtonText>
@@ -326,9 +328,9 @@ const App = () => (
        <ButtonText contentColor="blue" size="small">Primary Outline Small</ButtonText>
     </Button>
     <Button loading={true} intent="primary">
-      {/* Passamos explicitamente contentColor aqui por causa do ActivityIndicator */}
-      <ButtonText contentColor="white">Carregando...</ButtonText>
-      {/* RN: size e color no ActivityIndicator não vêm do useStyled */}
+      {/* Pass contentColor explicitly here because of ActivityIndicator */}
+      <ButtonText contentColor="white">Loading...</ButtonText>
+      {/* RN: size and color on ActivityIndicator don't come from useStyled */}
       <ActivityIndicator size="small" color="#FFFFFF" style={{ marginLeft: 8 }} />
     </Button>
   </View>
@@ -336,7 +338,7 @@ const App = () => (
 
 ```
 
-### Exemplo 2: Componente `Badge` (Web)
+### Example 2: `Badge` Component (Web)
 
 ```tsx
 import React from 'react';
@@ -380,10 +382,10 @@ const Badge = useStyled('span', {
       sm: { style: { fontSize: 12, padding: '2px 8px' } },
       md: { style: { fontSize: 14, padding: '3px 10px' } },
     },
-    // Adiciona uma variante para ter um ponto (dot)
+    // Add a variant for having a dot
     withDot: {
       true: {
-        style: { paddingLeft: '6px' }, // Ajusta padding esquerdo para o ponto
+        style: { paddingLeft: '6px' }, // Adjust left padding for the dot
       },
     },
   },
@@ -394,7 +396,7 @@ const Badge = useStyled('span', {
   },
 });
 
-// Componente auxiliar para o ponto
+// Helper component for the dot
 const Dot = useStyled('span', {
     base: { style: { display: 'inline-block', width: 6, height: 6, marginRight: 5, borderRadius: '50%' } },
     variants: {
@@ -411,44 +413,44 @@ const Dot = useStyled('span', {
     }
 });
 
-// Uso
+// Usage
 const App = () => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '20px' }}>
-    <Badge>Padrão</Badge>
+    <Badge>Default</Badge>
     <Badge colorScheme="success" size="md">
-      Sucesso MD
+      Success MD
     </Badge>
     <Badge colorScheme="danger" withDot={true}>
       <Dot colorScheme="danger" />
-      Perigo com Ponto
+      Danger with Dot
     </Badge>
      <Badge colorScheme="info" size="md" withDot={true}>
       <Dot colorScheme="info" />
-      Info MD com Ponto
+      Info MD with Dot
     </Badge>
-    <Badge colorScheme="warning">Aviso</Badge>
+    <Badge colorScheme="warning">Warning</Badge>
   </div>
 );
 ```
 
 ## TypeScript
 
-A biblioteca oferece forte integração com TypeScript. A configuração é validada em tempo de compilação usando o tipo `ConfigSchema`, garantindo que:
+The library offers strong integration with TypeScript. The configuration is validated at compile-time using the `ConfigSchema` type, ensuring that:
 
-*   As propriedades definidas em `base`, `variants` e `compoundVariants.props` sejam válidas para o `ComponenteBase`.
-*   Os valores em `defaultVariants` correspondam a variantes e valores definidos.
-*   As condições em `compoundVariants` usem nomes e valores de variantes válidos.
+*   Properties defined in `base`, `variants`, and `compoundVariants.props` are valid for the `BaseComponent`.
+*   Values in `defaultVariants` correspond to defined variants and values.
+*   Conditions in `compoundVariants` use valid variant names and values.
 
-Atributos `data-*` são permitidos na configuração. Outras propriedades inválidas gerarão erros de tipo.
+`data-*` attributes are allowed in the configuration. Other invalid properties will generate type errors.
 
-O tipo das props do componente final é inferido automaticamente, combinando as props originais do `ComponenteBase` (exceto aquelas usadas como nomes de variantes) com as props das variantes definidas.
+The props type of the final component is automatically inferred, combining the original props of the `BaseComponent` (except those used as variant names) with the defined variant props.
 
-## Notas
+## Notes
 
-*   **Performance:** A biblioteca adiciona uma pequena sobrecarga em tempo de execução para calcular os estilos. Para a maioria das aplicações, isso é insignificante, mas benchmarks estão disponíveis (veja seção de testes). A memoização interna ajuda a otimizar re-renderizações.
-*   **React Native:** Ao usar com React Native, lembre-se que a prop `className` não tem efeito. Use apenas a prop `style` com objetos de estilo válidos para RN.
-*   **Compatibilidade (NativeWind):** No momento, a integração direta com **NativeWind v4** no React Native (passando classes NativeWind via prop `className`) **não é suportada**. O suporte está planejado para futuras versões. Para estilização no React Native, utilize a prop `style`.
+*   **Performance:** The library adds a small runtime overhead to calculate styles. For most applications, this is negligible, but benchmarks are available (see tests section). Internal memoization helps optimize re-renders.
+*   **React Native:** When using with React Native, remember that the `className` prop has no effect. Use only the `style` prop with valid RN style objects.
+*   **Compatibility (NativeWind):** Currently, direct integration with **NativeWind v4** in React Native (passing NativeWind classes via the `className` prop) **is not supported**. Support is planned for future versions. For styling in React Native, use the `style` prop.
 
 ---
 
-*Desenvolvido com ❤️*
+*Developed with ❤️*

@@ -21,7 +21,8 @@
     "bench": "bun run helpers/__bench__/index.bench.tsx",
     "clean": "rm -rf dist",
     "build": "bun run ./build.mjs",
-    "build:types": "tsc --project tsconfig.json"
+    "build:types": "tsc --project tsconfig.json",
+    "prepublishOnly": "bun run build"
   },
   "dependencies": {
     "clsx": "^2.1.1",
@@ -41,8 +42,7 @@
     "typescript": "^5.0.0"
   },
   "peerDependencies": {
-    "react": ">=18.0.0",
-    "typescript": "^5"
+    "react": ">=18.0.0"
   },
   "keywords": [
     "react",
@@ -57,11 +57,11 @@
     "utility",
     "hook"
   ],
-  "author": "Bruno Garcia <eu@brunowillian.com>",
-  "license": "MIT",
   "publishConfig": {
     "access": "public"
   },
+  "author": "Bruno Garcia <eu@brunowillian.com>",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/Brunowilliang/use-styled.git"

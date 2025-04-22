@@ -16,11 +16,11 @@ import {
 
 export const useStyled = <T extends Component, C extends Config>(
 	component: T,
-	config: C & ConfigSchema<T, C>, // Valida a config na entrada
+	config: C & ConfigSchema<T, C>, // Validate the config on input
 ) => {
-	// Cria o componente funcional que aplica a lógica
+	// Create the functional component that applies the logic
 	const StyledComponentInternal: React.FC<FinalProps<T, C>> = incomingProps => {
-		// 1. Extrai a configuração
+		// 1. Extract configuration
 		const {
 			variants: configVariants,
 			defaultVariants,
@@ -28,10 +28,10 @@ export const useStyled = <T extends Component, C extends Config>(
 			base: baseProps,
 		} = config
 
-		// 2. Separa as props recebidas: variantes vs. props diretas (incluindo ref)
+		// 2. Separate incoming props: variants vs. direct props (including ref)
 		const variantKeys = configVariants ? Object.keys(configVariants) : []
 		const activeVariantProps: Record<string, string | boolean | undefined> = {}
-		const directProps: Partial<ComponentProps<T>> = {} // Props passadas diretamente no JSX
+		const directProps: Partial<ComponentProps<T>> = {} // Props passed directly in JSX
 
 		for (const key in incomingProps) {
 			const incomingKey = key as keyof typeof incomingProps
@@ -43,7 +43,7 @@ export const useStyled = <T extends Component, C extends Config>(
 			}
 		}
 
-		// 3. Aplica defaultVariants
+		// 3. Apply defaultVariants
 		if (defaultVariants) {
 			for (const key in defaultVariants) {
 				if (activeVariantProps[key] === undefined) {
@@ -53,7 +53,7 @@ export const useStyled = <T extends Component, C extends Config>(
 			}
 		}
 
-		// 4. Resolve as props das variantes e compound variants
+		// 4. Resolve props from variants and compound variants
 		const variantPropsResult = resolveVariantProps<T, C>(
 			configVariants,
 			activeVariantProps,
@@ -63,7 +63,7 @@ export const useStyled = <T extends Component, C extends Config>(
 			activeVariantProps,
 		)
 
-		// 5. Mescla todas as props na ordem correta
+		// 5. Merge all props in the correct order
 		const finalMergedProps = mergeFinalProps<T>(
 			baseProps,
 			variantPropsResult,
@@ -71,7 +71,7 @@ export const useStyled = <T extends Component, C extends Config>(
 			directProps,
 		)
 
-		// 6. Renderiza o componente original
+		// 6. Render the original component
 		return React.createElement(component, finalMergedProps)
 	}
 

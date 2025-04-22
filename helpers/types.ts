@@ -3,7 +3,7 @@ export type { ComponentProps } from 'react'
 
 
 /**
- * Define a estrutura esperada da configuração do componente.
+ * Defines the expected structure of the component configuration.
  */
 export type Config = {
 	base?: object
@@ -13,44 +13,44 @@ export type Config = {
 }
 
 /**
- * Alias para ElementType representando um componente React válido.
+ * Alias for ElementType representing a valid React component.
  */
 export type Component = ElementType
 
 
 /**
- * Valida um objeto de propriedades `P` contra as propriedades válidas de um componente `T`,
- * permitindo também atributos `data-*` e rejeitando outras props inválidas.
+ * Validates a properties object `P` against the valid properties of a component `T`,
+ * also allowing `data-*` attributes and rejecting other invalid props.
  */
-// 1. Tipo base que aceita props de T ou data-*
+// 1. Base type that accepts props from T or data-*
 type AllowedProps<T extends Component> = ComponentProps<T> & { [key: `data-${string}`]: unknown };
 
-// 2. Tipo que proíbe chaves extras
+// 2. Type that forbids extra keys
 type ForbidExtraProps<T extends Component, P> = {
     [K in keyof P as K extends keyof AllowedProps<T> ? never : K]: never
 };
 
-// 3. Validação final: P deve ser um subtipo de AllowedProps E não pode ter chaves extras
+// 3. Final validation: P must be a subtype of AllowedProps AND cannot have extra keys
 export type OnlyValidProps<T extends Component, P> =
-    P extends AllowedProps<T> // Garante que P é (pelo menos) um subconjunto de props permitidas
-        ? P & ForbidExtraProps<T, P> // Intersecta com o tipo que proíbe extras
-        : AllowedProps<T>; // Se P não for compatível, mostra o erro em relação ao tipo esperado
+    P extends AllowedProps<T> // Ensures P is (at least) a subset of allowed props
+        ? P & ForbidExtraProps<T, P> // Intersects with the type that forbids extras
+        : AllowedProps<T>; // If P is not compatible, shows the error relative to the expected type
 
 
 /**
- * Aplica recursivamente `OnlyValidProps` a cada objeto de estilo dentro da estrutura de variantes `V`.
- * Garante que todas as propriedades definidas dentro das variantes sejam válidas para o componente `T`.
+ * Recursively applies `OnlyValidProps` to each style object within the variants structure `V`.
+ * Ensures that all properties defined within the variants are valid for the component `T`.
  * 
- * @template T O tipo do componente base.
- * @template V O tipo da seção `variants` do objeto de configuração.
+ * @template T The type of the base component.
+ * @template V The type of the `variants` section of the configuration object.
  */
 export type ValidatedVariants<T extends Component, V> = V extends object
 ? {
     [VK in keyof V]: VK extends string
       ? {
-          // Itera sobre as chaves das variantes (ex: 'test')
-          [SK in keyof V[VK]]: SK extends string // Itera sobre as chaves de estilo (ex: 'a', 'b')
-            ? OnlyValidProps<T, V[VK][SK]> // Valida as propriedades dentro de cada estilo
+          // Iterates over variant keys (e.g., 'test')
+          [SK in keyof V[VK]]: SK extends string // Iterates over style keys (e.g., 'a', 'b')
+            ? OnlyValidProps<T, V[VK][SK]> // Validates properties within each style
             : never
         }
       : never
@@ -59,11 +59,11 @@ export type ValidatedVariants<T extends Component, V> = V extends object
 
 
 /**
- * Define o tipo esperado para a seção `defaultVariants` e melhora o IntelliSense.
- * Para cada chave de variante `K` em `V`, o valor esperado é a união das chaves de estilo (`keyof V[K]`).
- * Se as chaves de estilo forem 'true' | 'false', o tipo esperado é `boolean`.
+ * Defines the expected type for the `defaultVariants` section and improves IntelliSense.
+ * For each variant key `K` in `V`, the expected value is the union of style keys (`keyof V[K]`)
+ * If the style keys are 'true' | 'false', the expected type is `boolean`.
  * 
- * @template V O tipo da seção `variants` do objeto de configuração.
+ * @template V The type of the `variants` section of the configuration object.
  */
 export type ValidatedDefaultVariants<V> = V extends object
 	? {
@@ -75,11 +75,11 @@ export type ValidatedDefaultVariants<V> = V extends object
 
 
 /**
- * Define a estrutura e os tipos esperados para as CONDIÇÕES de um item de `compoundVariants`.
- * Baseado nas chaves e valores definidos na seção `variants` (`V`).
- * Melhora o IntelliSense ao definir as condições.
+ * Defines the structure and expected types for the CONDITIONS of a `compoundVariants` item.
+ * Based on the keys and values defined in the `variants` section (`V`).
+ * Improves IntelliSense when defining conditions.
  * 
- * @template V O tipo da seção `variants` do objeto de configuração.
+ * @template V The type of the `variants` section of the configuration object.
  */
 export type CompoundVariantConditions<V> = V extends object
 	? {
@@ -92,25 +92,25 @@ export type CompoundVariantConditions<V> = V extends object
 
 
 /**
- * Valida um ÚNICO item dentro do array `compoundVariants`.
- * PRIORIZA IntelliSense para props sacrificando validação local nelas.
+ * Validates a SINGLE item within the `compoundVariants` array.
+ * PRIORITIZES IntelliSense for props, sacrificing local validation on them.
  */
 export type ValidatedCompoundVariantItem<
 	T extends Component,
 	V,
 	Item extends object 
 > = 
-    // 1. Aplica as condições esperadas
+    // 1. Apply expected conditions
     CompoundVariantConditions<V> & 
-    // 2. Define explicitamente o tipo de 'props' para IntelliSense
-    //    Sacrifica a validação automática de OnlyValidProps AQUI.
+    // 2. Explicitly define the type of 'props' for IntelliSense
+    //    Sacrifices automatic OnlyValidProps validation HERE.
     (Item extends { props: infer P } ? { props?: Partial<ComponentProps<T>> } : { props?: never }) & 
-    // 3. Garante que não há chaves extras além das condições + 'props'
+    // 3. Ensure there are no extra keys beyond conditions + 'props'
     { [K in keyof Item as K extends keyof V | 'props' ? never : K]?: never } & 
-    // 4. Intersecta com o Item original para validar os valores das condições etc.
+    // 4. Intersect with the original Item to validate condition values etc.
     Item;
 
-// Valida o ARRAY compoundVariants inteiro (mantém ReadonlyArray)
+// Validate the entire compoundVariants ARRAY (maintains ReadonlyArray)
 type ValidatedCompoundVariants<T extends Component, V, CV> = CV extends ReadonlyArray<
     infer Item extends object
 >
@@ -118,12 +118,12 @@ type ValidatedCompoundVariants<T extends Component, V, CV> = CV extends Readonly
     : CV;
 
 /**
- * Valida a estrutura completa do objeto de configuração `C` contra o componente `T`.
- * Aplica as validações específicas para `base`, `variants`, `defaultVariants` e `compoundVariants`.
- * Usa tipos condicionais para lidar com a ausência opcional de `defaultVariants` ou `compoundVariants`.
+ * Validates the complete structure of the configuration object `C` against the component `T`.
+ * Applies specific validations for `base`, `variants`, `defaultVariants`, and `compoundVariants`.
+ * Uses conditional types to handle the optional absence of `defaultVariants` or `compoundVariants`.
  * 
- * @template T O tipo do componente base.
- * @template C O tipo literal do objeto de configuração completo passado.
+ * @template T The type of the base component.
+ * @template C The literal type of the complete configuration object passed.
  */
 export type ConfigSchema<T extends Component, C extends Config> = C extends {
 	base?: infer B
@@ -132,22 +132,20 @@ export type ConfigSchema<T extends Component, C extends Config> = C extends {
 	compoundVariants?: infer CompV
 }
 	? {	
-			// Caso 1: Todos existem
+			// Case 1: All exist
 			base?: OnlyValidProps<T, B>
 			variants?: ValidatedVariants<T, V>
-			defaultVariants?: DV &
-				ValidatedDefaultVariants<V> & {
+			defaultVariants?: DV & ValidatedDefaultVariants<V> & {
 					[KDV in keyof DV as KDV extends keyof V ? never : KDV]?: never
 				}
-			compoundVariants?: ValidatedCompoundVariants<T, V, CompV> // <<<--- VALIDA compoundVariants
+			compoundVariants?: ValidatedCompoundVariants<T, V, CompV> // <<<--- VALIDATES compoundVariants
 		}
 	: C extends { base?: infer B; variants?: infer V; defaultVariants?: infer DV }
 		? {
-				// Caso 2: Sem compoundVariants
+				// Case 2: No compoundVariants
 				base?: OnlyValidProps<T, B>
 				variants?: ValidatedVariants<T, V>
-				defaultVariants?: DV &
-					ValidatedDefaultVariants<V> & {
+				defaultVariants?: DV & ValidatedDefaultVariants<V> & {
 						[KDV in keyof DV as KDV extends keyof V ? never : KDV]?: never
 					}
 			}
@@ -157,26 +155,26 @@ export type ConfigSchema<T extends Component, C extends Config> = C extends {
 					compoundVariants?: infer CompV
 				}
 			? {
-					// Caso 3: Sem defaultVariants
+					// Case 3: No defaultVariants
 					base?: OnlyValidProps<T, B>
 					variants?: ValidatedVariants<T, V>
 					compoundVariants?: ValidatedCompoundVariants<T, V, CompV>
 				}
 			: C extends { base?: infer B; variants?: infer V }
-				? // Caso 4: Apenas base e variants
+				? // Case 4: Only base and variants
 					{
 						base?: OnlyValidProps<T, B>
 						variants?: ValidatedVariants<T, V>
 					}
-				: { base?: unknown; variants?: unknown } // Tipo de fallback genérico
+				: { base?: unknown; variants?: unknown } // Generic fallback type
 
 
 /**
- * Calcula o tipo das propriedades que representam as variantes ativas.
- * Baseado na seção `variants` do objeto de configuração `C`.
- * Se uma variante tiver chaves 'true'|'false', o tipo resultante é `boolean`.
+ * Calculates the type of the properties representing the active variants.
+ * Based on the `variants` section of the configuration object `C`.
+ * If a variant has keys 'true'|'false', the resulting type is `boolean`.
  * 
- * @template C O tipo literal do objeto de configuração completo passado.
+ * @template C The literal type of the complete configuration object passed.
  */
 export type CalculateVariantProps<C extends Config> = C extends { variants?: infer V } ? (V extends object ? {
     [K in keyof V]?: 
@@ -188,26 +186,26 @@ export type CalculateVariantProps<C extends Config> = C extends { variants?: inf
 
 
 /**
- * Calcula o tipo final das props para o componente estilizado retornado por `useStyled`.
- * Combina as props originais do componente base `T` (omitindo colisões com nomes de variantes)
- * com as propriedades calculadas das variantes (`CalculateVariantProps`) e adiciona `ref`.
+ * Calculates the final props type for the styled component returned by `useStyled`.
+ * Combines the original props of the base component `T` (omitting collisions with variant names)
+ * with the calculated variant properties (`CalculateVariantProps`) and adds `ref`.
  * 
- * @template T O tipo do componente base.
- * @template C O tipo literal do objeto de configuração completo passado.
+ * @template T The type of the base component.
+ * @template C The literal type of the complete configuration object passed.
  */
 export type FinalProps<T extends Component, C extends Config> = 
-    // Inclui RefAttributes<T> para permitir a prop ref
+    // Includes RefAttributes<T> to allow the ref prop
     RefAttributes<ComponentProps<T>['ref'] extends React.Ref<infer RefType> ? RefType : unknown> & 
     Omit<ComponentProps<T>, keyof CalculateVariantProps<C>> & 
     CalculateVariantProps<C>;
 
 
 /**
- * Define o tipo genérico para o componente final retornado por `useStyled`.
- * É um `ComponentType` (de React) cujas props são definidas por `FinalProps`,
- * usando os tipos específicos `T` (componente base) e `C` (configuração) fornecidos.
+ * Defines the generic type for the final component returned by `useStyled`.
+ * It is a `ComponentType` (from React) whose props are defined by `FinalProps`,
+ * using the specific types `T` (base component) and `C` (configuration) provided.
  * 
- * @template T O tipo do componente base.
- * @template C O tipo literal do objeto de configuração completo passado.
+ * @template T The type of the base component.
+ * @template C The literal type of the complete configuration object passed.
  */
 export type StyledComponent<T extends Component, C extends Config> = ComponentType<FinalProps<T, C>>
