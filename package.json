@@ -1,7 +1,7 @@
 {
   "name": "use-styled",
   "description": "A powerful library for creating React/React Native components",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
