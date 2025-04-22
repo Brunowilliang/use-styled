@@ -9,12 +9,12 @@ A powerful library for creating React/React Native components
 *   **Simple API:** A single `useStyled` hook to create your styled components.
 *   **Declarative Configuration:** Define base styles, variants, default variants, and compound variants in a clear configuration object.
 *   **Type-Safe:** Fully written in TypeScript, with compile-time configuration validation to prevent errors.
-*   **Platform Agnostic (Styles):** Works with React for Web (via `style` or `className`) and React Native (via `style`).
+*   **Platform Agnostic (Styles):** Works with React for Web (via `style` or `className`) and React Native (via `style` or `className` with NativeWind v4).
 *   **Tailwind/CSS Support:** Use the `className` prop in configurations to apply CSS classes, ideal for integration with Tailwind CSS, CSS Modules, etc.
 *   **Multiple Variants:** Apply multiple variants simultaneously (size, color, state, etc.).
 *   **Compound Variants:** Apply specific styles for combinations of variants.
 *   **Default Variants:** Define default values for your variants.
-*   **Smart Merging:** Automatically merges `style` (style objects) and `className` (for web, implicitly using `clsx` and `tailwind-merge`) from different sources (base, variants, compounds, direct props).
+*   **Smart Merging:** Automatically merges `style` (style objects) and `className` (for web with `clsx` and `tailwind-merge`, or for React Native with NativeWind v4) from different sources (base, variants, compounds, direct props).
 *   **Automatic Prop Forwarding:** Props passed to the styled component that are not variant names are automatically forwarded to the base component.
 
 ## Basic Usage
@@ -56,7 +56,7 @@ The configuration object is the heart of `useStyled`.
 An object containing props that will be unconditionally applied to the `BaseComponent`.
 
 *   Use `style` to apply inline or React Native style objects.
-*   Use `className` to apply CSS classes (e.g., Tailwind) on the web.
+*   Use `className` to apply CSS classes (e.g., Tailwind) on the web or with NativeWind v4 in React Native.
 *   Other valid props for the `BaseComponent` (including `data-*`) are also allowed.
 
 ```js
@@ -83,7 +83,7 @@ Defines different visual or behavioral states.
     intent: {
       primary: {
         style: { /* RN Style */ },
-        className: 'bg-blue-500 text-white hover:bg-blue-600' // Web/Tailwind style
+        className: 'bg-blue-500 text-white hover:bg-blue-600' // Web/Tailwind style or NativeWind
       },
       secondary: {
         style: { /* RN Style */ },
@@ -196,6 +196,7 @@ const ButtonBase = Pressable;
 // OR if using a custom component without forwardRef:
 // const ButtonBase = (props) => <Pressable {...props} />;
 
+// Note: With NativeWind v4, you can also use className in your variants
 const Button = useStyled(ButtonBase, {
   base: {
     style: {
@@ -205,6 +206,7 @@ const Button = useStyled(ButtonBase, {
       justifyContent: 'center',
       flexDirection: 'row', // To align text and indicator
     },
+    // Using NativeWind v4, you could also add: className: 'rounded-lg flex-row items-center justify-center'
     // Default Pressable/Button props can go here
     accessibilityRole: 'button',
   },
@@ -433,6 +435,113 @@ const App = () => (
 );
 ```
 
+### Example 3: Styled `FlatList` in React Native
+
+When styling complex components like FlatList that have required props such as `data` and `renderItem`, we can use a wrapper component approach:
+
+```tsx
+import React from 'react';
+import { View, Text, FlatList as RNFlatList, type FlatListProps } from 'react-native';
+import { useStyled } from 'use-styled';
+
+// Sample data
+const data = [
+	{ id: 1, name: 'Item 1' },
+	{ id: 2, name: 'Item 2' },
+	{ id: 3, name: 'Item 3' },
+]
+
+type ItemData = {
+	id: number
+	name: string
+}
+
+// Create a wrapper component that provides default values for required props
+type NewFlatListProps = Partial<FlatListProps<any>> & {}
+
+const NewFlatList = ({ ...props }: NewFlatListProps) => {
+	return <RNFlatList data={[]} renderItem={() => null} {...props} />
+}
+
+// Apply useStyled to the wrapper component
+const StyledFlatList = useStyled(NewFlatList, {
+	base: {
+		data: data,
+		keyExtractor: item => item.id.toString(),
+		className: 'w-full',
+	},
+	variants: {
+		variant: {
+			blue: {
+				renderItem: ({ item }: { item: ItemData }) => (
+					<View className='h-10 items-center justify-center bg-blue-500'>
+						<Text className='text-white'>{item.name}</Text>
+					</View>
+				),
+			},
+			green: {
+				renderItem: ({ item }: { item: ItemData }) => (
+					<View className='h-10 items-center justify-center bg-green-500'>
+						<Text className='text-white'>{item.name}</Text>
+					</View>
+				),
+			},
+			red: {
+				renderItem: ({ item }: { item: ItemData }) => (
+					<View className='h-10 items-center justify-center bg-red-500'>
+						<Text className='text-white'>{item.name}</Text>
+					</View>
+				),
+			},
+		},
+		isLoading: {
+			true: {
+				renderItem: () => (
+					<View className='h-10 w-screen animate-pulse bg-gray-500 transition-all' />
+				),
+			},
+		},
+	},
+});
+
+// Usage
+const ListExample = () => {
+  return (
+    <View className="flex-1">
+      {/* Basic usage with variant */}
+      <StyledFlatList variant="blue" />
+      
+      {/* With loading state */}
+      <StyledFlatList variant="green" isLoading={true} />
+      
+      {/* With custom data and other FlatList props */}
+      <StyledFlatList
+				variant='red'
+				data={[
+					{ id: 1, name: 'Custom Item' },
+					{ id: 2, name: 'Custom Item' },
+					{ id: 3, name: 'Custom Item' },
+					{ id: 4, name: 'Custom Item' },
+					{ id: 5, name: 'Custom Item' },
+					{ id: 6, name: 'Custom Item' },
+					{ id: 7, name: 'Custom Item' },
+					{ id: 8, name: 'Custom Item' },
+					{ id: 9, name: 'Custom Item' },
+				]}
+				horizontal
+				showsHorizontalScrollIndicator={false}
+			/>
+    </View>
+  );
+};
+```
+
+This approach allows you to:
+1. Create a stylized FlatList with variants
+2. Handle complex component props elegantly
+3. Override any prop when needed (data, renderItem, etc.)
+4. Keep full TypeScript support
+
 ## TypeScript
 
 The library offers strong integration with TypeScript. The configuration is validated at compile-time using the `ConfigSchema` type, ensuring that:
@@ -448,8 +557,24 @@ The props type of the final component is automatically inferred, combining the o
 ## Notes
 
 *   **Performance:** The library adds a small runtime overhead to calculate styles. For most applications, this is negligible, but benchmarks are available (see tests section). Internal memoization helps optimize re-renders.
-*   **React Native:** When using with React Native, remember that the `className` prop has no effect. Use only the `style` prop with valid RN style objects.
-*   **Compatibility (NativeWind):** Currently, direct integration with **NativeWind v4** in React Native (passing NativeWind classes via the `className` prop) **is not supported**. Support is planned for future versions. For styling in React Native, use the `style` prop.
+*   **Compatibility (NativeWind):** Support for **NativeWind v4** in React Native (passing NativeWind classes via the `className` prop) **is experimental but working**! Test it in your application and report any issues you find.
+
+## IDE Configuration
+
+### Tailwind CSS IntelliSense
+
+To make Tailwind CSS IntelliSense work with the `className` properties in your `useStyled` configuration, add the following to your VS Code / Cursor settings:
+
+```json
+"tailwindCSS.experimental.classRegex": [
+    [
+        "((?:useStyled)(?:[\\.a-zA-Z0-9]*)?\\((?:[^)(]|\\((?:[^)(]|\\((?:[^)(]|\\([^)(]*\\))*\\))*\\))*\\))",
+        "className\\s*:\\s*'(.*?)'"
+    ]
+]
+```
+
+This enables autocompletion and syntax highlighting for Tailwind classes inside the `className` properties of your styled components.
 
 ---
 
