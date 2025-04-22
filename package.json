@@ -1,0 +1,73 @@
+{
+  "name": "use-styled",
+  "description": "A powerful library for creating React/React Native components",
+  "version": "0.1.13",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "bun test",
+    "bench": "bun run helpers/__bench__/index.bench.tsx",
+    "clean": "rm -rf dist",
+    "build": "bun run ./build.mjs",
+    "build:types": "tsc --project tsconfig.json"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.2.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@happy-dom/global-registrator": "^17.4.4",
+    "@testing-library/react": "^16.3.0",
+    "@types/bun": "latest",
+    "@types/react": ">=18.0.0",
+    "@types/styled-components": "^5.1.34",
+    "chalk": "^5.4.1",
+    "mitata": "^1.0.34",
+    "react": "^18.0.0",
+    "styled-components": "^6.1.17",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "typescript": "^5"
+  },
+  "keywords": [
+    "react",
+    "react-native",
+    "styled",
+    "styled-components",
+    "styled-system",
+    "tamagui",
+    "nativewind",
+    "tailwind",
+    "css-in-js",
+    "utility",
+    "hook"
+  ],
+  "author": "Bruno Garcia <eu@brunowillian.com>",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Brunowilliang/use-styled.git"
+  },
+  "homepage": "https://github.com/Brunowilliang/use-styled",
+  "bugs": {
+    "url": "https://github.com/Brunowilliang/use-styled/discussions"
+  }
+}
