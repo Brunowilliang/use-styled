@@ -1,34 +1,34 @@
 ![use-styled logo](./assets/logo.png)
 
-Crie componentes React e React Native com variantes de forma elegante e integrada.
+Create React and React Native components with variants in an elegant and integrated way.
 
-`use-styled` permite desacoplar a lógica de estilização e variantes da lógica do componente, tornando seu código mais limpo, reutilizável e fácil de manter, com uma API focada na experiência do desenvolvedor (DX).
+`use-styled` allows you to decouple styling and variant logic from component logic, making your code cleaner, reusable, and easier to maintain, with an API focused on developer experience (DX).
 
-**➡️ [Visite a Documentação Completa](https://usestyled.com/) para guias, exemplos e referências.**
+**➡️ [Visit the Full Documentation](https://usestyled.com/) for guides, examples, and references.**
 
-## Instalação
+## Installation
 
 ```bash
 npm install use-styled
-# ou
+# or
 yarn add use-styled
-# ou
+# or
 pnpm add use-styled
-# ou
+# or
 bun add use-styled
 ```
 
-## Uso Básico
+## Basic Usage
 
-O coração da biblioteca é o hook `useStyled`:
+The heart of the library is the `useStyled` hook:
 
 ```tsx
 import { useStyled } from 'use-styled';
-import { Pressable, Text } from 'react-native'; // Ou 'button', 'div', etc.
+import { Pressable, Text } from 'react-native'; // Or 'button', 'div', etc.
 
 const Button = useStyled(Pressable, {
   base: {
-    // Estilos/props base aplicados sempre
+    // Base styles/props always applied
     className: 'px-4 py-2 rounded-md',
   },
   variants: {
@@ -48,10 +48,10 @@ const Button = useStyled(Pressable, {
 });
 
 const ButtonText = useStyled(Text, {
-  // ... configuração para o texto ...
+  // ... configuration for the text ...
 });
 
-// Exemplo de uso
+// Example usage
 function MyComponent() {
   return (
     <Button intent="secondary" size="sm">
@@ -61,15 +61,25 @@ function MyComponent() {
 }
 ```
 
-## Principais Características
+## Key Features
 
-*   **API Integrada**: Defina estilos, variantes e o componente em um único hook.
-*   **Type-Safe por Design**: Inferência de tipos e validação para segurança e autocompletar.
-*   **Cross-Platform**: Mesma API para React (Web) e React Native.
-*   **Tailwind/NativeWind Ready**: Use `className` diretamente nas variantes.
+*   **Integrated API**: Define styles, variants, and the component in a single hook.
+*   **Type-Safe by Design**: Type inference and validation for safety and autocompletion.
+*   **Cross-Platform**: Same API for React (Web) and React Native.
+*   **Tailwind/NativeWind Ready**: Use `className` directly in variants.
 
-**Explore a [Documentação Completa](https://usestyled.com/) para aprender sobre `compoundVariants`, `style` vs `className`, uso avançado e mais!**
+**Explore the [Full Documentation](https://usestyled.com/) to learn about `compoundVariants`, `style` vs `className`, advanced usage, and more!**
+
+## Acknowledgements
+
+Software development is a collaborative and iterative process. `use-styled` wouldn't exist without the incredible work of other people and projects in the open-source community. We would like to express our sincere gratitude to:
+
+*   **`class-variance-authority` (cva)** by Joe Bell: For popularizing a robust and type-safe way to handle class variants.
+*   **`tailwind-variants`** by Junior Garcia and Tianen Pang: For expanding the CVA concept with a rich API, including `base`, `variants`, `compoundVariants`, and `defaultVariants`, which directly influenced the features of `use-styled`.
+*   **`Tamagui`** by Nate: For its innovative and elegant approach to creating universal styled components (React/React Native), which served as the main inspiration for the API and developer experience (DX) of `use-styled`.
+
+Thank you to Joe, Junior, Tianen, and Nate for their significant contributions that make the development ecosystem richer and more productive.
 
 ---
 
-*Desenvolvido com ❤️ por Bruno Garcia*
+*Developed with ❤️ by Bruno Garcia*
