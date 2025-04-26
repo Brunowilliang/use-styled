@@ -1,1 +1,2 @@
-export { useStyled } from './helpers'
+export { useStyled } from './helpers/useStyled'
+export { useSlot } from './helpers/useSlot'

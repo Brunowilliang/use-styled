@@ -6,6 +6,7 @@ import type {
 	ComponentProps,
 	ConfigSchema,
 	FinalProps,
+	DebugConfig,
 } from './types'
 
 import {
@@ -13,20 +14,27 @@ import {
 	resolveCompoundVariantProps,
 	mergeFinalProps,
 } from './utils'
+import { logger } from './logger'
 
 export const useStyled = <T extends Component, C extends Config>(
 	component: T,
-	config: C & ConfigSchema<T, C>, // Validate the config on input
+	config: C & DebugConfig & ConfigSchema<T, C>, // Validate the config on input
 ) => {
 	// Create the functional component that applies the logic
 	const StyledComponentInternal: React.FC<FinalProps<T, C>> = incomingProps => {
 		// 1. Extract configuration
 		const {
+			name,
+			debug,
 			variants: configVariants,
 			defaultVariants,
 			compoundVariants: configCompoundVariants,
 			base: baseProps,
 		} = config
+
+		if (debug) {
+			logger.debug(name, 'Incoming Props:', incomingProps)
+		}
 
 		// 2. Separate incoming props: variants vs. direct props (including ref)
 		const variantKeys = configVariants ? Object.keys(configVariants) : []
@@ -43,6 +51,15 @@ export const useStyled = <T extends Component, C extends Config>(
 			}
 		}
 
+		if (debug) {
+			logger.debug(
+				name,
+				'Separated - Active Variant Props:',
+				activeVariantProps,
+			)
+			logger.debug(name, 'Separated - Direct Props:', directProps)
+		}
+
 		// 3. Apply defaultVariants
 		if (defaultVariants) {
 			for (const key in defaultVariants) {
@@ -51,6 +68,14 @@ export const useStyled = <T extends Component, C extends Config>(
 						defaultVariants[key as keyof typeof defaultVariants]
 				}
 			}
+		}
+
+		if (debug && defaultVariants) {
+			logger.debug(
+				name,
+				'After Defaults - Active Variant Props:',
+				activeVariantProps,
+			)
 		}
 
 		// 4. Resolve props from variants and compound variants
@@ -63,6 +88,15 @@ export const useStyled = <T extends Component, C extends Config>(
 			activeVariantProps,
 		)
 
+		if (debug) {
+			logger.debug(name, 'Resolved Variant Props:', variantPropsResult)
+			logger.debug(
+				name,
+				'Resolved Compound Variant Props:',
+				compoundPropsResult,
+			)
+		}
+
 		// 5. Merge all props in the correct order
 		const finalMergedProps = mergeFinalProps<T>(
 			baseProps,
@@ -71,14 +105,21 @@ export const useStyled = <T extends Component, C extends Config>(
 			directProps,
 		)
 
+		if (debug) {
+			logger.debug(name, 'Final Merged Props:', finalMergedProps)
+		}
+
 		// 6. Render the original component
 		return React.createElement(component, finalMergedProps)
 	}
 
 	const componentName =
-		typeof component === 'string'
+		config.name ||
+		(typeof component === 'string'
 			? component
-			: (component as any).displayName || (component as any).name || 'Component'
+			: (component as any).displayName ||
+				(component as any).name ||
+				'Component')
 	StyledComponentInternal.displayName = `Styled(${componentName})`
 
 	return StyledComponentInternal as StyledComponent<T, C>
