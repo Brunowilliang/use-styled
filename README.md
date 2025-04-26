@@ -1,5 +1,3 @@
-# use-styled ⚡️
-
 ![use-styled logo](./assets/logo.png)
 
 Crie componentes React e React Native com variantes de forma elegante e integrada.
