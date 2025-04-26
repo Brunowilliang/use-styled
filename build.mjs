@@ -1,5 +1,5 @@
 import { $ } from 'bun'
-import { logger } from './helpers/logger'
+import { logger } from './src/logger'
 
 const entrypoint = './index.ts'
 const outdir = './dist'

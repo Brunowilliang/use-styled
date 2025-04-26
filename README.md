@@ -1,5 +1,7 @@
 # use-styled ⚡️
 
+![use-styled logo](./assets/logo.png)
+
 Crie componentes React e React Native com variantes de forma elegante e integrada.
 
 `use-styled` permite desacoplar a lógica de estilização e variantes da lógica do componente, tornando seu código mais limpo, reutilizável e fácil de manter, com uma API focada na experiência do desenvolvedor (DX).

@@ -35,9 +35,3 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # Build output
 /dist
-
-# Benchmarks
-/helpers/__bench__
-
-# Tests
-/helpers/__tests__

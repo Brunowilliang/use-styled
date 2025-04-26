@@ -1,7 +1,7 @@
 {
 	"name": "use-styled",
 	"description": "A powerful library for creating React/React Native components",
-	"version": "0.1.23",
+	"version": "0.1.26",
 	"main": "./dist/index.js",
 	"module": "./dist/index.js",
 	"types": "./dist/index.d.ts",
@@ -18,7 +18,7 @@
 	],
 	"scripts": {
 		"test": "bun test",
-		"bench": "bun run helpers/__bench__/index.bench.tsx",
+		"bench": "bun run src/__bench__/index.bench.tsx",
 		"clean": "rm -rf dist",
 		"build": "bun run ./build.mjs",
 		"build:types": "tsc --project tsconfig.json",
