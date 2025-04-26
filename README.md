@@ -68,7 +68,7 @@ function MyComponent() {
 *   **Cross-Platform**: Mesma API para React (Web) e React Native.
 *   **Tailwind/NativeWind Ready**: Use `className` diretamente nas variantes.
 
-**Explore a [Documentação Completa](https://use-styled-docs.vercel.app/) para aprender sobre `compoundVariants`, `style` vs `className`, uso avançado e mais!**
+**Explore a [Documentação Completa](https://usestyled.vercel.app/) para aprender sobre `compoundVariants`, `style` vs `className`, uso avançado e mais!**
 
 ---
 
