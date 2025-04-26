@@ -4,7 +4,7 @@ Crie componentes React e React Native com variantes de forma elegante e integrad
 
 `use-styled` permite desacoplar a lógica de estilização e variantes da lógica do componente, tornando seu código mais limpo, reutilizável e fácil de manter, com uma API focada na experiência do desenvolvedor (DX).
 
-**➡️ [Visite a Documentação Completa](https://use-styled-docs.vercel.app/) para guias, exemplos e referências.**
+**➡️ [Visite a Documentação Completa](https://usestyled.vercel.app/) para guias, exemplos e referências.**
 
 ## Instalação
 
