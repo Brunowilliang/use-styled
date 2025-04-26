@@ -4,7 +4,7 @@ Crie componentes React e React Native com variantes de forma elegante e integrad
 
 `use-styled` permite desacoplar a lógica de estilização e variantes da lógica do componente, tornando seu código mais limpo, reutilizável e fácil de manter, com uma API focada na experiência do desenvolvedor (DX).
 
-**➡️ [Visite a Documentação Completa](https://usestyled.vercel.app/) para guias, exemplos e referências.**
+**➡️ [Visite a Documentação Completa](https://usestyled.com/) para guias, exemplos e referências.**
 
 ## Instalação
 
@@ -68,7 +68,7 @@ function MyComponent() {
 *   **Cross-Platform**: Mesma API para React (Web) e React Native.
 *   **Tailwind/NativeWind Ready**: Use `className` diretamente nas variantes.
 
-**Explore a [Documentação Completa](https://usestyled.vercel.app/) para aprender sobre `compoundVariants`, `style` vs `className`, uso avançado e mais!**
+**Explore a [Documentação Completa](https://usestyled.com/) para aprender sobre `compoundVariants`, `style` vs `className`, uso avançado e mais!**
 
 ---
 
