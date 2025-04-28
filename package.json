@@ -1,7 +1,7 @@
 {
 	"name": "use-styled",
 	"description": "A powerful library for creating React/React Native components",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"main": "./dist/index.js",
 	"module": "./dist/index.js",
 	"types": "./dist/index.d.ts",
@@ -22,7 +22,10 @@
 		"clean": "rm -rf dist",
 		"build": "bun run ./build.mjs",
 		"build:types": "tsc --project tsconfig.json",
-		"prepublishOnly": "bun run build"
+		"publish:beta": "npm version prerelease --preid beta --no-git-tag-version && bun publish --tag beta",
+		"publish:release": "npm version patch --no-git-tag-version && bun publish",
+		"publish:minor": "npm version minor --no-git-tag-version && bun publish",
+		"publish:major": "npm version major --no-git-tag-version && bun publish"
 	},
 	"dependencies": {
 		"clsx": "^2.1.1",

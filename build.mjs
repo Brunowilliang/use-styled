@@ -4,11 +4,11 @@ import { logger } from './src/logger'
 const entrypoint = './index.ts'
 const outdir = './dist'
 
-logger.info('Limpando diretório de saída...')
+logger.info('Cleaning output directory...')
 await $`rm -rf ${outdir}`
-logger.success('Diretório de saída limpo!')
+logger.success('Output directory cleaned!')
 
-logger.info(`Construindo o pacote ${entrypoint}...`)
+logger.info(`Building package ${entrypoint}...`)
 
 const result = await Bun.build({
 	entrypoints: [entrypoint],
@@ -22,15 +22,15 @@ const result = await Bun.build({
 })
 
 if (!result.success) {
-	logger.error('Falha no build ESM:')
+	logger.error('ESM build failed:')
 	logger.error(result.logs.join('\n'))
 	process.exit(1)
 }
-logger.success('Pacote construído!')
+logger.success('Package built!')
 
-logger.info('Gerando tipos...')
+logger.info('Generating types...')
 await $`tsc --project tsconfig.json`
 
-logger.success('Types gerados!')
+logger.success('Types generated!')
 
-logger.success('Build Finalizada!')
+logger.success('Build finished!')
