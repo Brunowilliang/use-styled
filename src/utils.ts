@@ -3,7 +3,7 @@ import type { Component, Config, ComponentProps } from './types'
 
 // Imports for cn (add to your project)
 import clsx, { type ClassValue } from 'clsx'
-import { twMerge } from 'tailwind-merge'
+import { extendTailwindMerge, getDefaultConfig } from 'tailwind-merge'
 
 // --- Helper Types ---
 type AnyObject = Record<string, any>
@@ -35,11 +35,30 @@ export const mergeStyles = (
 	return Object.keys(merged).length > 0 ? merged : undefined
 }
 
+// --- Custom tailwind-merge configuration ---
+const customTwMerge = extendTailwindMerge(config => {
+	// Pegar a configuração padrão para estendê-la
+	const defaultConfig = getDefaultConfig();
+
+	return {
+		...config, // Manter a configuração base passada (geralmente vazia na primeira chamada)
+		classGroups: {
+			...config.classGroups, // Manter grupos existentes
+			// Corrigido para 'font-size'
+			'font-size': [
+				...(config.classGroups?.['font-size'] ?? defaultConfig.classGroups['font-size']),
+				{ text: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'h9', 'h10'] }
+			],
+		},
+	}
+})
+
 /**
  * Merges CSS classes using clsx and tailwind-merge. Essential for Tailwind/NativeWind.
  */
 export function cn(...inputs: ClassValue[]): string | undefined {
-	const result = twMerge(clsx(inputs))
+	// Usar a instância customizada
+	const result = customTwMerge(clsx(inputs))
 	return result.length > 0 ? result : undefined
 }
 

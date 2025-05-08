@@ -38,17 +38,25 @@
 		// Declaration
 		"declaration": true,
 		"emitDeclarationOnly": true,
-		"declarationMap": true
+		"declarationMap": true,
+		"rootDir": "./"
 	},
 	"include": [
-		"**/*.ts",
-		"**/*.tsx",
-		"testing-library.ts"
+		"index.ts",
+		"src/**/*.ts",
+		"src/**/*.tsx"
 	],
 	"exclude": [
 		"node_modules",
 		"dist",
 		"**/*.bench.tsx",
-		"./build.mjs"
+		"./build.mjs",
+		"**/*.test.ts",
+		"**/*.test.tsx",
+		"**/*.spec.ts",
+		"**/*.spec.tsx",
+		"src/setupTests.ts",
+		"testing-library.ts",
+		"happydom.ts",
 	]
 }
