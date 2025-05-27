@@ -12,6 +12,59 @@ type StyleValue = object | undefined | null
 // Defining StyleObject correctly
 type StyleObject = AnyObject
 
+// --- Function Composition Helpers (V2 Feature) ---
+
+/**
+ * Checks if a value is a function
+ */
+const isFunction = (value: any): value is Function => {
+	return typeof value === 'function'
+}
+
+/**
+ * Composes multiple functions into a single function.
+ * Functions are executed in order: first function executes first, then second, etc.
+ * The return value of the last function is returned.
+ * 
+ * @param functions - Array of functions to compose
+ * @returns A composed function that executes all functions in sequence
+ */
+const composeFunctions = (...functions: (Function | undefined)[]): Function => {
+	const validFunctions: Function[] = []
+	
+	// Filter out undefined values and ensure we have only functions
+	for (const fn of functions) {
+		if (isFunction(fn)) {
+			validFunctions.push(fn)
+		}
+	}
+	
+	if (validFunctions.length === 0) {
+		return () => undefined
+	}
+	
+	if (validFunctions.length === 1) {
+		return validFunctions[0] as Function
+	}
+	
+	return (...args: any[]) => {
+		let result: any
+		
+		// Execute all functions in order, keeping the last result
+		for (const fn of validFunctions) {
+			try {
+				result = fn(...args)
+			} catch (error) {
+				// Log error with function context for better debugging
+				console.error('[use-styled] Error in composed function:', error)
+				throw error
+			}
+		}
+		
+		return result
+	}
+}
+
 // --- Specific Helper Functions ---
 
 /**
@@ -142,7 +195,8 @@ export const resolveCompoundVariantProps = <
 
 /**
  * Main function to merge all prop sources in the correct priority order.
- * Optimized version to reduce creation of intermediate objects.
+ * V2 Feature: Automatically composes functions instead of overwriting them.
+ * Execution order: base → variants → compounds → direct props
  */
 export const mergeFinalProps = <T extends Component>(
 	base: Partial<ComponentProps<T>> | undefined,
@@ -156,21 +210,38 @@ export const mergeFinalProps = <T extends Component>(
 	const finalProps: AnyObject = {}
 	const stylesToMerge: StyleValue[] = []
 	const classesToMerge: ClassValue[] = []
+	const functionsToCompose: Record<string, Function[]> = {}
 
-	// Iterate through sources to collect styles, classes, and other props
+	// Iterate through sources to collect styles, classes, functions, and other props
 	for (const source of sources) {
 		if (!source) continue
 
 		for (const key in source) {
+			const value = source[key as keyof typeof source]
+			
 			if (key === 'style') {
-				stylesToMerge.push(source.style)
+				stylesToMerge.push(value as StyleValue)
 			} else if (key === 'className') {
-				classesToMerge.push(source.className)
+				classesToMerge.push(value as ClassValue)
 			} else if (key !== 'ref') {
-				// Ignore ref here, handled separately
-				// Later props overwrite earlier ones
-				finalProps[key] = source[key as keyof typeof source]
+				// V2 Feature: Check if the value is a function for composition
+				if (isFunction(value)) {
+					if (!functionsToCompose[key]) {
+						functionsToCompose[key] = []
+					}
+					functionsToCompose[key].push(value)
+				} else {
+					// Non-function props: later props overwrite earlier ones
+					finalProps[key] = value
+				}
 			}
+		}
+	}
+
+	// V2 Feature: Compose all collected functions
+	for (const [key, functions] of Object.entries(functionsToCompose)) {
+		if (functions.length > 0) {
+			finalProps[key] = composeFunctions(...functions)
 		}
 	}
 

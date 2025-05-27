@@ -318,8 +318,8 @@ test('mergeFinalProps handles missing or empty props', () => {
 	expect(final).toEqual({})
 })
 
-// Test added to cover the TODO
-test('mergeFinalProps handles complex prop types and functions', () => {
+// V2 Test: Function composition in mergeFinalProps
+test('mergeFinalProps handles complex prop types and functions (V2 - Function Composition)', () => {
 	const baseOnClick = () => console.log('base')
 	const directOnClick = () => console.log('direct')
 	const refObject = { current: 'refValue' }
@@ -337,7 +337,7 @@ test('mergeFinalProps handles complex prop types and functions', () => {
 		config: { setting: 'B', extra: true }, // Overrides base, adds extra
 	}
 	const directProps = {
-		onClick: directOnClick, // Overrides base
+		onClick: directOnClick, // V2: Composes with base function
 		items: [4, 5], // Overrides variant
 		config: { setting: 'C' }, // Overrides compound
 		style: { transform: [{ scale: 1 }] }, // Example of complex style (RN)
@@ -352,14 +352,31 @@ test('mergeFinalProps handles complex prop types and functions', () => {
 		directProps,
 	)
 
-	// Check functions (should be the direct one)
-	expect(finalProps.onClick).toBe(directOnClick)
+	// V2: Check functions (should be composed, not just the direct one)
+	expect(typeof finalProps.onClick).toBe('function')
+	expect(finalProps.onClick).not.toBe(directOnClick) // It's a composed function
+	expect(finalProps.onClick).not.toBe(baseOnClick) // It's a composed function
 
-	// Check arrays (should be the direct one)
+	// Test that the composed function executes both functions
+	const originalConsoleLog = console.log
+	const consoleCalls: string[] = []
+	console.log = (message: string) => {
+		consoleCalls.push(message)
+	}
+
+	// Execute the composed function
+	finalProps.onClick()
+
+	// Restore console.log
+	console.log = originalConsoleLog
+
+	// Both functions should have been called in order: base → direct
+	expect(consoleCalls).toEqual(['base', 'direct'])
+
+	// Check arrays (should be the direct one - non-function props still override)
 	expect(finalProps.items).toEqual([4, 5])
 
 	// Check objects (should be the direct one, no deep merge)
-	// The mergeFinalProps function performs a shallow merge of non-style/className props
 	expect(finalProps.config).toEqual({ setting: 'C' })
 
 	// Check data attributes (comes from variant)

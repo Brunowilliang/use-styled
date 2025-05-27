@@ -1,7 +1,7 @@
 {
 	"name": "use-styled",
 	"description": "A powerful library for creating React/React Native components",
-	"version": "1.0.23-beta.1",
+	"version": "1.1.2",
 	"main": "./dist/index.js",
 	"module": "./dist/index.js",
 	"types": "./dist/index.d.ts",
@@ -14,7 +14,8 @@
 	},
 	"files": [
 		"dist",
-		"README.md"
+		"README.md",
+		"CHANGELOG.md"
 	],
 	"scripts": {
 		"test": "bun test",
@@ -70,9 +71,9 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Brunowilliang/use-styled.git"
+		"url": "https://github.com/Brunowilliang/use-styled"
 	},
-	"homepage": "https://github.com/Brunowilliang/use-styled",
+	"homepage": "https://usestyled.com",
 	"bugs": {
 		"url": "https://github.com/Brunowilliang/use-styled/discussions"
 	}
