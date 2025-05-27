@@ -1,7 +1,7 @@
 {
 	"name": "use-styled",
 	"description": "A powerful library for creating React/React Native components",
-	"version": "1.0.22",
+	"version": "1.0.23-beta.1",
 	"main": "./dist/index.js",
 	"module": "./dist/index.js",
 	"types": "./dist/index.d.ts",
@@ -43,6 +43,7 @@
 		"chalk": "^5.4.1",
 		"mitata": "^1.0.34",
 		"react": "^18.0.0",
+		"react-dom": "^18.0.0",
 		"styled-components": "^6.1.17",
 		"typescript": "^5.0.0"
 	},
