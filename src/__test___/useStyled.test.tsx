@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { expect, test } from 'bun:test'
 import { useStyled } from '../useStyled'
 import type { ComponentProps } from 'react'
@@ -198,4 +198,163 @@ test('useStyled works with native HTML tag string', () => {
 		border: '1px solid red',
 		padding: '20px', // from large variant
 	})
+})
+
+// V2 Test: Function Composition
+test('V2 - should compose onClick functions from variant and direct props', () => {
+	// Mock console.log to capture calls
+	const originalConsoleLog = console.log
+	const consoleCalls: string[] = []
+	console.log = (message: string) => {
+		consoleCalls.push(message)
+	}
+
+	const ButtonWithHaptics = useStyled('button', {
+		base: {
+			'data-testid': 'haptic-button',
+		},
+		variants: {
+			haptics: {
+				light: {
+					onClick: () => {
+						console.log('haptics.light')
+					},
+				},
+				medium: {
+					onClick: () => {
+						console.log('haptics.medium')
+					},
+				},
+			},
+		},
+	})
+
+	render(
+		<ButtonWithHaptics 
+			haptics="light" 
+			onClick={() => console.log('button clicked')}
+		>
+			Test Button
+		</ButtonWithHaptics>
+	)
+
+	const button = screen.getByTestId('haptic-button')
+	fireEvent.click(button)
+
+	// Restore console.log
+	console.log = originalConsoleLog
+
+	// Both functions should have been called
+	expect(consoleCalls).toContain('haptics.light')
+	expect(consoleCalls).toContain('button clicked')
+	expect(consoleCalls.length).toBe(2)
+})
+
+// V2 Test: Function execution order
+test('V2 - should execute functions in correct order: variant → direct', () => {
+	const originalConsoleLog = console.log
+	const executionOrder: string[] = []
+	console.log = (message: string) => {
+		executionOrder.push(message)
+	}
+
+	const ButtonWithOrder = useStyled('button', {
+		base: {
+			'data-testid': 'order-button',
+		},
+		variants: {
+			test: {
+				true: {
+					onClick: () => {
+						console.log('variant-function')
+					},
+				},
+			},
+		},
+	})
+
+	render(
+		<ButtonWithOrder 
+			test={true} 
+			onClick={() => console.log('direct-function')}
+		>
+			Order Test
+		</ButtonWithOrder>
+	)
+
+	const button = screen.getByTestId('order-button')
+	fireEvent.click(button)
+
+	// Restore console.log
+	console.log = originalConsoleLog
+
+	// Check execution order: variant first, then direct
+	expect(executionOrder).toEqual(['variant-function', 'direct-function'])
+})
+
+// V2 Test: Only variant function (no direct prop)
+test('V2 - should work with only variant function', () => {
+	const originalConsoleLog = console.log
+	const consoleCalls: string[] = []
+	console.log = (message: string) => {
+		consoleCalls.push(message)
+	}
+
+	const ButtonOnlyVariant = useStyled('button', {
+		base: {
+			'data-testid': 'variant-only-button',
+		},
+		variants: {
+			haptics: {
+				heavy: {
+					onClick: () => {
+						console.log('haptics.heavy')
+					},
+				},
+			},
+		},
+	})
+
+	render(<ButtonOnlyVariant haptics="heavy">Only Variant</ButtonOnlyVariant>)
+
+	const button = screen.getByTestId('variant-only-button')
+	fireEvent.click(button)
+
+	// Restore console.log
+	console.log = originalConsoleLog
+
+	// Only variant function should be called
+	expect(consoleCalls).toContain('haptics.heavy')
+	expect(consoleCalls.length).toBe(1)
+})
+
+// V2 Test: Only direct function (no variant)
+test('V2 - should work with only direct function', () => {
+	const originalConsoleLog = console.log
+	const consoleCalls: string[] = []
+	console.log = (message: string) => {
+		consoleCalls.push(message)
+	}
+
+	const ButtonOnlyDirect = useStyled('button', {
+		base: {
+			'data-testid': 'direct-only-button',
+		},
+	})
+
+	render(
+		<ButtonOnlyDirect onClick={() => console.log('only-direct')}>
+			Only Direct
+		</ButtonOnlyDirect>
+	)
+
+	const button = screen.getByTestId('direct-only-button')
+	fireEvent.click(button)
+
+	// Restore console.log
+	console.log = originalConsoleLog
+
+	// Only direct function should be called
+	expect(consoleCalls).toContain('only-direct')
+	expect(consoleCalls.length).toBe(1)
 })
