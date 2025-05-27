@@ -1,218 +1,284 @@
+import React from 'react'
 import '@testing-library/jest-dom'
 import { test, describe, expect } from 'bun:test'
 import { render, screen } from '@testing-library/react'
 import { useStyled } from '../useStyled'
 import { useSlot } from '../useSlot'
 
-const ButtonRoot = useStyled('button', {
+// Basic components for testing
+const BaseButton = useStyled('button', {
+	base: { className: 'base-button' },
 	variants: {
 		variant: {
-			primary: { className: 'btn-root-primary' },
-			secondary: { className: 'btn-root-secondary' },
-		},
-		intent: {
-			positive: { className: 'btn-root-positive' },
-			negative: { className: 'btn-root-negative' },
+			primary: { className: 'btn-primary' },
+			secondary: { className: 'btn-secondary' },
 		},
 	},
 })
-const ButtonLeft = useStyled('div', {})
-const ButtonRight = useStyled('div', {})
-const ButtonLeftIcon = useStyled('div', {})
-const ButtonRightIcon = useStyled('div', {})
-const Teste = useStyled('div', {
+
+const BaseDiv = useStyled('div', {
+	base: { className: 'base-div' },
+})
+
+const BaseIcon = useStyled('span', {
+	base: { className: 'icon' },
 	variants: {
-		variant: {
-			TestePrimary: { className: 'teste-primary' },
-			TesteSecondary: { className: 'teste-secondary' },
-		},
-	},
-})
-const TesteIcon = useStyled('div', {
-	variants: {
-		variant: {
-			TesteIconPrimary: { className: 'teste-icon-primary' },
-			TesteIconSecondary: { className: 'teste-icon-secondary' },
+		size: {
+			sm: { className: 'icon-sm' },
+			lg: { className: 'icon-lg' },
 		},
 	},
 })
 
-const Button = useSlot({
-	Root: ButtonRoot,
-	Left: {
-		Root: ButtonLeft,
-		Icon: ButtonLeftIcon,
-		Test: {
-			Root: Teste,
-			Icon: TesteIcon,
-			Test: {
-				Root: Teste,
-				Icon: TesteIcon,
-			},
-		},
-	},
-	Right: {
-		Root: ButtonRight,
-		Icon: ButtonRightIcon,
-	},
-})
+describe('useSlot', () => {
+	describe('Basic Functionality', () => {
+		test('should attach static properties to a component', () => {
+			const ButtonWithIcon = useSlot(BaseButton, {
+				Icon: BaseIcon,
+			})
 
-// Helper to check if something is a React component type (function)
-function isReactComponent(component: any): boolean {
-	return typeof component === 'function'
-}
+			expect(ButtonWithIcon.Icon).toBeDefined()
+			expect(typeof ButtonWithIcon.Icon).toBe('function')
+		})
 
-// --- Test Suites for useSlot ---
+		test('should preserve original component functionality', () => {
+			const ButtonWithIcon = useSlot(BaseButton, {
+				Icon: BaseIcon,
+			})
 
-describe('useSlot Component Structure (Button Example)', () => {
-	test('should attach slots as static properties correctly', () => {
-		// Check top-level slots
-		expect(isReactComponent(Button)).toBe(true)
-		expect(isReactComponent(Button.Left)).toBe(true)
-		expect(isReactComponent(Button.Right)).toBe(true)
+			render(
+				<ButtonWithIcon data-testid='button' variant='primary'>
+					Test Button
+				</ButtonWithIcon>,
+			)
 
-		// Check nested slots
-		expect(isReactComponent(Button.Left.Icon)).toBe(true)
-		expect(isReactComponent(Button.Right.Icon)).toBe(true)
-		expect(isReactComponent(Button.Left.Test)).toBe(true)
-		expect(isReactComponent(Button.Left.Test.Icon)).toBe(true)
+			const button = screen.getByTestId('button')
+			expect(button).toBeInTheDocument()
+			expect(button.tagName).toBe('BUTTON')
+			expect(button).toHaveClass('base-button', 'btn-primary')
+			expect(button).toHaveTextContent('Test Button')
+		})
 
-		// Check deeply nested slots
-		expect(isReactComponent(Button.Left.Test.Test)).toBe(true)
-		expect(isReactComponent(Button.Left.Test.Test.Icon)).toBe(true)
+		test('should render attached slot components', () => {
+			const ButtonWithIcon = useSlot(BaseButton, {
+				Icon: BaseIcon,
+			})
+
+			render(
+				<div>
+					<ButtonWithIcon data-testid='button'>Button</ButtonWithIcon>
+					<ButtonWithIcon.Icon data-testid='icon' size='lg' />
+				</div>,
+			)
+
+			const button = screen.getByTestId('button')
+			const icon = screen.getByTestId('icon')
+
+			expect(button).toBeInTheDocument()
+			expect(icon).toBeInTheDocument()
+			expect(icon).toHaveClass('icon', 'icon-lg')
+		})
 	})
 
-	test('should set the correct displayName for the root component', () => {
-		// Note: useStyled might interfere or set its own displayName later
-		// We check the name derived from useSlot
-		expect(Button.displayName).toContain('useSlot(') // It might be wrapped by useStyled
+	describe('Nested Slots', () => {
+		test('should support multiple levels of slot nesting', () => {
+			// Create nested structure: Button -> Left -> Icon
+			const ButtonLeft = useSlot(BaseDiv, {
+				Icon: BaseIcon,
+			})
+
+			const Button = useSlot(BaseButton, {
+				Left: ButtonLeft,
+			})
+
+			expect(Button.Left).toBeDefined()
+			expect(Button.Left.Icon).toBeDefined()
+		})
+
+		test('should render nested slot components correctly', () => {
+			const ButtonLeft = useSlot(BaseDiv, {
+				Icon: BaseIcon,
+			})
+
+			const Button = useSlot(BaseButton, {
+				Left: ButtonLeft,
+			})
+
+			render(
+				<Button data-testid='button'>
+					<Button.Left data-testid='left'>
+						<Button.Left.Icon data-testid='icon' size='sm' />
+						Left Content
+					</Button.Left>
+					Button Content
+				</Button>,
+			)
+
+			expect(screen.getByTestId('button')).toBeInTheDocument()
+			expect(screen.getByTestId('left')).toBeInTheDocument()
+			expect(screen.getByTestId('icon')).toBeInTheDocument()
+			expect(screen.getByTestId('icon')).toHaveClass('icon', 'icon-sm')
+		})
 	})
 
-	test('attached slots should be the correct underlying components', () => {
-		// You might want to compare against the original components if needed
-		// This can be complex due to HOCs like useStyled
-		// Example: Check if Button.Left is derived from the original ButtonLeft
-		// This test is more about type/existence than exact instance equality
-		expect(Button.Left).toBeDefined()
-		expect(Button.Left.Icon).toBeDefined()
-		// ... add more checks if specific component identity is crucial
+	describe('Component Cloning', () => {
+		test('should clone component when already decorated', () => {
+			// First decoration
+			const ButtonWithIcon = useSlot(BaseButton, {
+				Icon: BaseIcon,
+			})
+
+			// Second decoration (should trigger cloning)
+			const ButtonWithIconAndText = useSlot(ButtonWithIcon, {
+				Text: BaseDiv,
+			})
+
+			expect(ButtonWithIconAndText.Icon).toBeDefined()
+			expect(ButtonWithIconAndText.Text).toBeDefined()
+		})
+
+		test('should preserve existing slots when cloning', () => {
+			const ButtonWithIcon = useSlot(BaseButton, {
+				Icon: BaseIcon,
+			})
+
+			const ButtonWithIconAndText = useSlot(ButtonWithIcon, {
+				Text: BaseDiv,
+			})
+
+			render(
+				<div>
+					<ButtonWithIconAndText data-testid='button'>
+						Button
+					</ButtonWithIconAndText>
+					<ButtonWithIconAndText.Icon data-testid='icon' />
+					<ButtonWithIconAndText.Text data-testid='text'>
+						Text
+					</ButtonWithIconAndText.Text>
+				</div>,
+			)
+
+			expect(screen.getByTestId('button')).toBeInTheDocument()
+			expect(screen.getByTestId('icon')).toBeInTheDocument()
+			expect(screen.getByTestId('text')).toBeInTheDocument()
+		})
 	})
-})
 
-describe('useSlot Component Rendering (Button Example)', () => {
-	test('renders the root component correctly', () => {
-		render(<Button data-testid='root-btn'>Root Button</Button>)
-		const buttonElement = screen.getByTestId('root-btn')
-		expect(buttonElement).toBeInTheDocument()
-		expect(buttonElement.tagName).toBe('BUTTON') // Based on ButtonRoot = useStyled('button', ...)
-		expect(buttonElement).toHaveTextContent('Root Button')
+	describe('Multiple Slots', () => {
+		test('should attach multiple slots to a single component', () => {
+			const ComplexButton = useSlot(BaseButton, {
+				Icon: BaseIcon,
+				Left: BaseDiv,
+				Right: BaseDiv,
+			})
+
+			expect(ComplexButton.Icon).toBeDefined()
+			expect(ComplexButton.Left).toBeDefined()
+			expect(ComplexButton.Right).toBeDefined()
+		})
+
+		test('should render all attached slots', () => {
+			const ComplexButton = useSlot(BaseButton, {
+				Icon: BaseIcon,
+				Left: BaseDiv,
+				Right: BaseDiv,
+			})
+
+			render(
+				<div>
+					<ComplexButton data-testid='button'>Main</ComplexButton>
+					<ComplexButton.Icon data-testid='icon' />
+					<ComplexButton.Left data-testid='left'>Left</ComplexButton.Left>
+					<ComplexButton.Right data-testid='right'>Right</ComplexButton.Right>
+				</div>,
+			)
+
+			expect(screen.getByTestId('button')).toBeInTheDocument()
+			expect(screen.getByTestId('icon')).toBeInTheDocument()
+			expect(screen.getByTestId('left')).toBeInTheDocument()
+			expect(screen.getByTestId('right')).toBeInTheDocument()
+		})
 	})
 
-	test('renders the root component with variants from useStyled', () => {
-		// ButtonRoot uses useStyled with variants
-		render(
-			<Button
-				data-testid='root-variant-btn'
-				variant='secondary'
-				intent='negative'
-			>
-				Variant Button
-			</Button>,
-		)
-		const buttonElement = screen.getByTestId('root-variant-btn')
-		expect(buttonElement).toBeInTheDocument()
-		// Now we can check the classes from variants
-		expect(buttonElement).toHaveClass('btn-root-secondary')
-		expect(buttonElement).toHaveClass('btn-root-negative')
-		expect(buttonElement).not.toHaveClass('btn-root-primary')
-		expect(buttonElement).not.toHaveClass('btn-root-positive')
+	describe('Component Properties', () => {
+		test('should maintain component displayName', () => {
+			const ButtonWithIcon = useSlot(BaseButton, {
+				Icon: BaseIcon,
+			})
+
+			// useStyled sets displayName as 'Styled(button)'
+			expect(ButtonWithIcon.displayName).toBe('Styled(button)')
+		})
+
+		test('should work as React components', () => {
+			const ButtonWithIcon = useSlot(BaseButton, {
+				Icon: BaseIcon,
+			})
+
+			// Test that they can be rendered without errors
+			expect(() => {
+				render(
+					<div>
+						<ButtonWithIcon>Test</ButtonWithIcon>
+						<ButtonWithIcon.Icon />
+					</div>,
+				)
+			}).not.toThrow()
+		})
 	})
 
-	test('renders nested slot components and applies their specific variants', () => {
-		render(
-			<Button>
-				{/* Button.Left doesn't have variants defined in useSlot.tsx */}
-				<Button.Left data-testid='left-slot'>
-					{/* Button.Left.Icon doesn't have variants */}
-					<Button.Left.Icon data-testid='left-icon' />
+	describe('Edge Cases', () => {
+		test('should handle empty slots object', () => {
+			const ButtonWithNoSlots = useSlot(BaseButton, {})
 
-					{/* Teste component used as Button.Left.Test, passing variant */}
-					<Button.Left.Test data-testid='test-slot' variant='TestePrimary'>
-						{/* TesteIcon used as Button.Left.Test.Icon, passing variant */}
-						<Button.Left.Test.Icon
-							data-testid='test-icon'
-							variant='TesteIconSecondary'
-						/>
-						{/* Deeply nested Teste component */}
-						<Button.Left.Test.Test
-							data-testid='test-test-slot'
-							variant='TesteSecondary'
-						>
-							{/* Deeply nested TesteIcon component */}
-							<Button.Left.Test.Test.Icon
-								data-testid='test-test-icon'
-								variant='TesteIconPrimary'
-							/>
-						</Button.Left.Test.Test>
-					</Button.Left.Test>
-				</Button.Left>
-				Main Content
-				{/* Button.Right and Button.Right.Icon don't have variants */}
-				<Button.Right data-testid='right-slot'>
-					<Button.Right.Icon data-testid='right-icon' />
-				</Button.Right>
-			</Button>,
-		)
+			render(<ButtonWithNoSlots data-testid='button'>Test</ButtonWithNoSlots>)
 
-		// Check if slots rendered (as before)
-		expect(screen.getByTestId('left-slot')).toBeInTheDocument()
-		expect(screen.getByTestId('left-icon')).toBeInTheDocument()
-		expect(screen.getByTestId('right-slot')).toBeInTheDocument()
-		expect(screen.getByTestId('right-icon')).toBeInTheDocument()
-		expect(screen.getByTestId('test-slot')).toBeInTheDocument()
-		expect(screen.getByTestId('test-icon')).toBeInTheDocument()
-		expect(screen.getByTestId('test-test-slot')).toBeInTheDocument()
-		expect(screen.getByTestId('test-test-icon')).toBeInTheDocument()
-		expect(screen.getByText('Main Content')).toBeInTheDocument()
+			expect(screen.getByTestId('button')).toBeInTheDocument()
+		})
 
-		// Check specific variant classes on slots that have them
-		const testSlot = screen.getByTestId('test-slot')
-		expect(testSlot).toHaveClass('teste-primary')
-		expect(testSlot).not.toHaveClass('teste-secondary')
+		test('should handle components with existing static properties', () => {
+			// Add a static property to the base component
+			;(BaseButton as any).existingProp = 'existing'
 
-		const testIcon = screen.getByTestId('test-icon')
-		expect(testIcon).toHaveClass('teste-icon-secondary')
-		expect(testIcon).not.toHaveClass('teste-icon-primary')
+			const ButtonWithIcon = useSlot(BaseButton, {
+				Icon: BaseIcon,
+			})
 
-		const testTestSlot = screen.getByTestId('test-test-slot')
-		expect(testTestSlot).toHaveClass('teste-secondary')
-		expect(testTestSlot).not.toHaveClass('teste-primary')
-
-		const testTestIcon = screen.getByTestId('test-test-icon')
-		expect(testTestIcon).toHaveClass('teste-icon-primary')
-		expect(testTestIcon).not.toHaveClass('teste-icon-secondary')
+			expect((ButtonWithIcon as any).existingProp).toBe('existing')
+			expect(ButtonWithIcon.Icon).toBeDefined()
+		})
 	})
-})
 
-// --- Original Test Suite (can be kept or removed) ---
+	describe('Integration with useStyled', () => {
+		test('should work seamlessly with useStyled components', () => {
+			const StyledButton = useStyled('button', {
+				base: { className: 'styled-btn' },
+				variants: {
+					size: {
+						sm: { className: 'btn-sm' },
+						lg: { className: 'btn-lg' },
+					},
+				},
+			})
 
-describe('Original Test Example', () => {
-	test('renders a button with the correct class and style', () => {
-		render(
-			<button
-				data-testid='original-button'
-				className='my-button bg-red-500'
-				style={{ backgroundColor: 'red', color: 'white' }}
-			>
-				Click Me
-			</button>,
-		)
-		const buttonElement = screen.getByTestId('original-button')
-		expect(buttonElement).toHaveClass('my-button')
-		expect(buttonElement).toHaveClass('bg-red-500')
-		expect(buttonElement).toHaveStyle({
-			color: 'white',
-			backgroundColor: 'red',
+			const ButtonWithSlots = useSlot(StyledButton, {
+				Icon: BaseIcon,
+			})
+
+			render(
+				<div>
+					<ButtonWithSlots data-testid='button' size='lg'>
+						Styled Button
+					</ButtonWithSlots>
+					<ButtonWithSlots.Icon data-testid='icon' size='sm' />
+				</div>,
+			)
+
+			const button = screen.getByTestId('button')
+			const icon = screen.getByTestId('icon')
+
+			expect(button).toHaveClass('styled-btn', 'btn-lg')
+			expect(icon).toHaveClass('icon', 'icon-sm')
 		})
 	})
 })
