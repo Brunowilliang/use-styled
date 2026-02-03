@@ -1,6 +1,7 @@
 # ⚠️ This package has been renamed to `better-styled`
 
-> **use-styled** has been renamed to **better-styled** with new features and improvements.
+> **use-styled** has been renamed to **better-styled** with new features and
+> improvements.
 >
 > Please migrate to the new package:
 >
@@ -11,15 +12,19 @@
 >
 > **New Documentation:** [better-styled.com](https://better-styled.com)
 >
-> **New Repository:** [github.com/brunowilliang/better-styled](https://github.com/brunowilliang/better-styled)
+> **New Repository:**
+> [github.com/brunowilliang/better-styled](https://github.com/brunowilliang/better-styled)
 
 ---
 
 ![use-styled logo](./assets/logo.png)
 
-Create React and React Native components with variants in an elegant and integrated way.
+Create React and React Native components with variants in an elegant and
+integrated way.
 
-`use-styled` allows you to decouple styling and variant logic from component logic, making your code cleaner, reusable, and easier to maintain, with an API focused on developer experience (DX).
+`use-styled` allows you to decouple styling and variant logic from component
+logic, making your code cleaner, reusable, and easier to maintain, with an API
+focused on developer experience (DX).
 
 ## Installation
 
@@ -32,28 +37,28 @@ npm install better-styled
 The heart of the library is the `useStyled` hook:
 
 ```tsx
-import { useStyled } from 'better-styled';
-import { Pressable, Text } from 'react-native'; // Or 'button', 'div', etc.
+import { useStyled } from "better-styled";
+import { Pressable, Text } from "react-native"; // Or 'button', 'div', etc.
 
 const Button = useStyled(Pressable, {
   base: {
     // Base styles/props always applied
-    className: 'px-4 py-2 rounded-md',
+    className: "px-4 py-2 rounded-md",
   },
   variants: {
     intent: {
-      primary: { className: 'bg-blue-500' },
-      secondary: { className: 'bg-gray-200' },
+      primary: { className: "bg-blue-500" },
+      secondary: { className: "bg-gray-200" },
     },
     size: {
-      sm: { className: 'text-sm' },
-      md: { className: 'text-base' },
+      sm: { className: "text-sm" },
+      md: { className: "text-base" },
     },
   },
   defaultVariants: {
-    intent: 'primary',
-    size: 'md',
-  }
+    intent: "primary",
+    size: "md",
+  },
 });
 
 const ButtonText = useStyled(Text, {
@@ -72,23 +77,35 @@ function MyComponent() {
 
 ## Key Features
 
-*   **Integrated API**: Define styles, variants, and the component in a single hook.
-*   **Type-Safe by Design**: Type inference and validation for safety and autocompletion.
-*   **Cross-Platform**: Same API for React (Web) and React Native.
-*   **Tailwind/NativeWind Ready**: Use `className` directly in variants.
+- **Integrated API**: Define styles, variants, and the component in a single
+  hook.
+- **Type-Safe by Design**: Type inference and validation for safety and
+  autocompletion.
+- **Cross-Platform**: Same API for React (Web) and React Native.
+- **Tailwind/NativeWind Ready**: Use `className` directly in variants.
 
-**Explore the [Full Documentation](https://better-styled.com/) to learn about `compoundVariants`, `style` vs `className`, advanced usage, and more!**
+**Explore the [Full Documentation](https://better-styled.com/) to learn about
+`compoundVariants`, `style` vs `className`, advanced usage, and more!**
 
 ## Acknowledgements
 
-Software development is a collaborative and iterative process. `better-styled` wouldn't exist without the incredible work of other people and projects in the open-source community. We would like to express our sincere gratitude to:
+Software development is a collaborative and iterative process. `better-styled`
+wouldn't exist without the incredible work of other people and projects in the
+open-source community. We would like to express our sincere gratitude to:
 
-*   **`class-variance-authority` (cva)** by Joe Bell: For popularizing a robust and type-safe way to handle class variants.
-*   **`tailwind-variants`** by Junior Garcia and Tianen Pang: For expanding the CVA concept with a rich API, including `base`, `variants`, `compoundVariants`, and `defaultVariants`, which directly influenced the features of `better-styled`.
-*   **`Tamagui`** by Nate: For its innovative and elegant approach to creating universal styled components (React/React Native), which served as the main inspiration for the API and developer experience (DX) of `better-styled`.
+- **`class-variance-authority` (cva)** by Joe Bell: For popularizing a robust
+  and type-safe way to handle class variants.
+- **`tailwind-variants`** by Junior Garcia and Tianen Pang: For expanding the
+  CVA concept with a rich API, including `base`, `variants`, `compoundVariants`,
+  and `defaultVariants`, which directly influenced the features of
+  `better-styled`.
+- **`Tamagui`** by Nate: For its innovative and elegant approach to creating
+  universal styled components (React/React Native), which served as the main
+  inspiration for the API and developer experience (DX) of `better-styled`.
 
-Thank you to Joe, Junior, Tianen, and Nate for their significant contributions that make the development ecosystem richer and more productive.
+Thank you to Joe, Junior, Tianen, and Nate for their significant contributions
+that make the development ecosystem richer and more productive.
 
 ---
 
-*Developed with ❤️ by Bruno Garcia*
+_Developed with ❤️ by Bruno Garcia_
