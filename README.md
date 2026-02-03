@@ -1,21 +1,30 @@
+# ⚠️ This package has been renamed to `better-styled`
+
+> **use-styled** has been renamed to **better-styled** with new features and improvements.
+>
+> Please migrate to the new package:
+>
+> ```bash
+> npm uninstall use-styled
+> npm install better-styled
+> ```
+>
+> **New Documentation:** [better-styled.com](https://better-styled.com)
+>
+> **New Repository:** [github.com/brunowilliang/better-styled](https://github.com/brunowilliang/better-styled)
+
+---
+
 ![use-styled logo](./assets/logo.png)
 
 Create React and React Native components with variants in an elegant and integrated way.
 
 `use-styled` allows you to decouple styling and variant logic from component logic, making your code cleaner, reusable, and easier to maintain, with an API focused on developer experience (DX).
 
-**➡️ [Visit the Full Documentation](https://usestyled.com/) for guides, examples, and references.**
-
 ## Installation
 
 ```bash
-npm install use-styled
-# or
-yarn add use-styled
-# or
-pnpm add use-styled
-# or
-bun add use-styled
+npm install better-styled
 ```
 
 ## Basic Usage
@@ -23,7 +32,7 @@ bun add use-styled
 The heart of the library is the `useStyled` hook:
 
 ```tsx
-import { useStyled } from 'use-styled';
+import { useStyled } from 'better-styled';
 import { Pressable, Text } from 'react-native'; // Or 'button', 'div', etc.
 
 const Button = useStyled(Pressable, {
@@ -68,15 +77,15 @@ function MyComponent() {
 *   **Cross-Platform**: Same API for React (Web) and React Native.
 *   **Tailwind/NativeWind Ready**: Use `className` directly in variants.
 
-**Explore the [Full Documentation](https://usestyled.com/) to learn about `compoundVariants`, `style` vs `className`, advanced usage, and more!**
+**Explore the [Full Documentation](https://better-styled.com/) to learn about `compoundVariants`, `style` vs `className`, advanced usage, and more!**
 
 ## Acknowledgements
 
-Software development is a collaborative and iterative process. `use-styled` wouldn't exist without the incredible work of other people and projects in the open-source community. We would like to express our sincere gratitude to:
+Software development is a collaborative and iterative process. `better-styled` wouldn't exist without the incredible work of other people and projects in the open-source community. We would like to express our sincere gratitude to:
 
 *   **`class-variance-authority` (cva)** by Joe Bell: For popularizing a robust and type-safe way to handle class variants.
-*   **`tailwind-variants`** by Junior Garcia and Tianen Pang: For expanding the CVA concept with a rich API, including `base`, `variants`, `compoundVariants`, and `defaultVariants`, which directly influenced the features of `use-styled`.
-*   **`Tamagui`** by Nate: For its innovative and elegant approach to creating universal styled components (React/React Native), which served as the main inspiration for the API and developer experience (DX) of `use-styled`.
+*   **`tailwind-variants`** by Junior Garcia and Tianen Pang: For expanding the CVA concept with a rich API, including `base`, `variants`, `compoundVariants`, and `defaultVariants`, which directly influenced the features of `better-styled`.
+*   **`Tamagui`** by Nate: For its innovative and elegant approach to creating universal styled components (React/React Native), which served as the main inspiration for the API and developer experience (DX) of `better-styled`.
 
 Thank you to Joe, Junior, Tianen, and Nate for their significant contributions that make the development ecosystem richer and more productive.
 
